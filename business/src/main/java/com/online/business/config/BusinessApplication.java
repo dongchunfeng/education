@@ -1,4 +1,4 @@
-package com.online.system;
+package com.online.business.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
@@ -16,14 +16,14 @@ import org.springframework.core.env.Environment;
 @Slf4j
 @ComponentScan("com.online")
 @MapperScan("com.online.server.mapper")
-public class SystemApplication {
+public class BusinessApplication {
 
     public static void main(String[] args) {
 
-        SpringApplication app = new SpringApplication(SystemApplication.class);
+        SpringApplication app = new SpringApplication(BusinessApplication.class);
         Environment environment = app.run(args).getEnvironment();
-        log.info("system 启动成功!");
-        log.info("system: \thttp://127.0.0.1:{}", environment.getProperty("server.port"));
+        log.info("business 启动成功!");
+        log.info("business: \thttp://127.0.0.1:{}", environment.getProperty("server.port"));
 
     }
 
