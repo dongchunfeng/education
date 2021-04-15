@@ -24,25 +24,43 @@ public class ChapterController {
 
     @Resource
     private ChapterService chapterService;
+    private static final String BUSINESS_NAME = "大章";
 
-    @RequestMapping(path = "/chapter/{page}/{size}",method = RequestMethod.GET)
-    public ResponseDto chapter(@PathVariable int page,@PathVariable int size, QueryChapterDto qs){
+    /**
+     * 分页查询
+     * @param page
+     * @param size
+     * @param qs
+     * @return
+     */
+    @RequestMapping(path = "/chapter/{page}/{size}", method = RequestMethod.GET)
+    public ResponseDto list(@PathVariable int page, @PathVariable int size, QueryChapterDto qs) {
         PageDto all = chapterService.findAll(page, size, qs.getDaname());
-        return new ResponseDto().ok(0,"大章列表查询成功",all);
+        return new ResponseDto().ok(0, "大章列表查询成功", all);
     }
 
-    @RequestMapping(path = "/chapter/add",method = RequestMethod.POST)
-    public ResponseDto chapter(@RequestBody ChapterDto chapterDto){
+    /**
+     * 保存 id有值更新 无值时新增
+     * @param chapterDto
+     * @return
+     */
+    @RequestMapping(path = "/chapter/add", method = RequestMethod.POST)
+    public ResponseDto save(@RequestBody ChapterDto chapterDto) {
         return chapterService.save(chapterDto);
     }
 
-    @RequestMapping(path = "/chapter/delete/{id}",method = RequestMethod.GET)
-    public ResponseDto chapter(@PathVariable String id){
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
+    @RequestMapping(path = "/chapter/delete/{id}", method = RequestMethod.GET)
+    public ResponseDto delete(@PathVariable String id) {
         int i = chapterService.delete(id);
-        if(i>0){
-            return ResponseDto.ok(0,"大章删除成功");
+        if (i > 0) {
+            return ResponseDto.ok(0, "大章删除成功");
         }
-        return ResponseDto.fail(1,"大章删除失败");
+        return ResponseDto.fail(1, "大章删除失败");
     }
 
 }

@@ -31,6 +31,13 @@ public class ChapterService {
     @Resource
     private ChapterMapper chapterMapper;
 
+    /**
+     * 分页查询
+     * @param page
+     * @param size
+     * @param name
+     * @return
+     */
     public PageDto findAll(int page, int size, String name) {
         PageDto pageDto = new PageDto();
         pageDto.setPage(page);
@@ -53,6 +60,11 @@ public class ChapterService {
         return pageDto;
     }
 
+    /**
+     * 根据name查询
+     * @param name
+     * @return
+     */
     public boolean findChapterByName(String name){
         ChapterExample chapterExample = new ChapterExample();
         chapterExample.createCriteria().andNameEqualTo(name);
@@ -80,11 +92,21 @@ public class ChapterService {
         }
     }
 
+    /**
+     * 保存
+     * @param chapter
+     * @return
+     */
     private int insert(Chapter chapter) {
         chapter.setId(UuidUtil.getShortUuid());
         return chapterMapper.insert(chapter);
     }
 
+    /**
+     * 修改
+     * @param chapter
+     * @return
+     */
     private int update(Chapter chapter) {
         return chapterMapper.updateByPrimaryKey(chapter);
     }
