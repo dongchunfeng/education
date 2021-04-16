@@ -2,8 +2,6 @@ package com.online.server.dto;
 
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
  * @Description
  * @Author Mr.Dong <dongcf1997@163.com>
@@ -12,8 +10,8 @@ import java.io.Serializable;
  * @Date 2021/4/14 19:02
  */
 @Data
-public class QueryChapterDto {
+public class QuerySectionDto {
 
-    String daname;
+    String title;
 
 }
