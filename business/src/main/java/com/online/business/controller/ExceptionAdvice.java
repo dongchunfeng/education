@@ -4,6 +4,7 @@ import com.online.server.dto.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import java.io.PrintWriter;
 public class ExceptionAdvice {
 
     @ExceptionHandler(Exception.class)
+    @ResponseBody
     public ResponseDto handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.error("服务器发生异常: " + e.getMessage());
         for (StackTraceElement element : e.getStackTrace()) {

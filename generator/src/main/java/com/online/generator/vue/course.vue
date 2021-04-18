@@ -1,40 +1,73 @@
 <template>
   <d2-container>
-    <el-dialog :title="title" :visible.sync="dialogFormSectionVisible">
+    <el-dialog :title="title" :visible.sync="dialogFormCourseVisible">
   <el-form :model="form" label-width="80px" :rules="rules" ref="ruleForm">
-              <el-form-item label="标题" prop="title">
-                  <el-input v-model="form.title" autocomplete="off"></el-input>
+              <el-form-item label="名称" prop="name">
+              <el-input v-model="form.name" autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="课程" prop="courseId">
-                  <el-input v-model="form.courseId" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="大章" prop="chapterId">
-                  <el-input v-model="form.chapterId" autocomplete="off"></el-input>
-              </el-form-item>
-              <el-form-item label="视频" prop="video">
-                  <el-input v-model="form.video" autocomplete="off"></el-input>
+              <el-form-item label="概述" prop="summary">
+              <el-input v-model="form.summary" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="时长" prop="time">
-                  <el-input v-model="form.time" autocomplete="off"></el-input>
+              <el-input v-model="form.time" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="价格(元)" prop="price">
+              <el-input v-model="form.price" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="封面" prop="image">
+              <el-input v-model="form.image" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="级别" prop="level">
+                      <el-select v-model="form.level" placeholder="请选择">
+                          <el-option
+                                  v-for="item in COURSE_LEVEL"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                          </el-option>
+                      </el-select>
+
               </el-form-item>
               <el-form-item label="收费" prop="charge">
-                  <el-input v-model="form.charge" autocomplete="off"></el-input>
+                      <el-select v-model="form.charge" placeholder="请选择">
+                          <el-option
+                                  v-for="item in COURSE_CHARGE"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                          </el-option>
+                      </el-select>
+
+              </el-form-item>
+              <el-form-item label="状态" prop="status">
+                      <el-select v-model="form.status" placeholder="请选择">
+                          <el-option
+                                  v-for="item in COURSE_STATUS"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                          </el-option>
+                      </el-select>
+
+              </el-form-item>
+              <el-form-item label="报名数" prop="enroll">
+              <el-input v-model="form.enroll" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="顺序" prop="sort">
-                  <el-input v-model="form.sort" autocomplete="off"></el-input>
+              <el-input v-model="form.sort" autocomplete="off"></el-input>
               </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="resetForm('ruleForm')">重置</el-button>
-    <el-button @click="dialogFormSectionVisible = false">取 消</el-button>
+    <el-button @click="dialogFormCourseVisible = false">取 消</el-button>
     <el-button type="primary" @click="save('ruleForm')">确 定</el-button>
   </div>
 </el-dialog>
     <template slot="header">
       <el-form :model="params">
-      标题:<el-input v-model="params.title" style="width:100px;margin-right:5px"></el-input>
+      名称:<el-input v-model="params.name" style="width:100px;margin-right:5px"></el-input>
       <el-button type="primary" v-on:click="getTableData" size="small" style="margin-right:5px">查询</el-button>
-      <el-button type="primary" v-on:click="openSectionHtml('ruleForm')" size="small">新增小节</el-button>
+      <el-button type="primary" v-on:click="openCourseHtml('ruleForm')" size="small">新增课程表</el-button>
     </el-form>
     </template>
     <el-table
@@ -53,23 +86,13 @@
                     width="100">
             </el-table-column>
             <el-table-column
-                    prop="title"
-                    label="标题"
+                    prop="name"
+                    label="名称"
                     width="100">
             </el-table-column>
             <el-table-column
-                    prop="courseId"
-                    label="课程"
-                    width="100">
-            </el-table-column>
-            <el-table-column
-                    prop="chapterId"
-                    label="大章"
-                    width="100">
-            </el-table-column>
-            <el-table-column
-                    prop="video"
-                    label="视频"
+                    prop="summary"
+                    label="概述"
                     width="100">
             </el-table-column>
             <el-table-column
@@ -78,8 +101,33 @@
                     width="100">
             </el-table-column>
             <el-table-column
+                    prop="price"
+                    label="价格(元)"
+                    width="100">
+            </el-table-column>
+            <el-table-column
+                    prop="image"
+                    label="封面"
+                    width="100">
+            </el-table-column>
+            <el-table-column
+                    prop="level"
+                    label="级别"
+                    width="100">
+            </el-table-column>
+            <el-table-column
                     prop="charge"
                     label="收费"
+                    width="100">
+            </el-table-column>
+            <el-table-column
+                    prop="status"
+                    label="状态"
+                    width="100">
+            </el-table-column>
+            <el-table-column
+                    prop="enroll"
+                    label="报名数"
                     width="100">
             </el-table-column>
             <el-table-column
@@ -119,7 +167,7 @@
 
 <script>
 export default {
-    name: 'section',
+    name: 'course',
     created(){
       this.getTableData();
     },
@@ -129,12 +177,15 @@ export default {
         title:"",
         ruleForm: {
             "id":'',
-            "title":'',
-            "courseId":'',
-            "chapterId":'',
-            "video":'',
+            "name":'',
+            "summary":'',
             "time":'',
+            "price":'',
+            "image":'',
+            "level":'',
             "charge":'',
+            "status":'',
+            "enroll":'',
             "sort":'',
             "createAt":'',
             "updateAt":'',
@@ -143,23 +194,32 @@ export default {
             "id": [
                 { required: true, message: '请选择ID', trigger: 'change' }
             ],
-            "title": [
-                { required: true, message: '请选择标题', trigger: 'change' }
+            "name": [
+                { required: true, message: '请选择名称', trigger: 'change' }
             ],
-            "courseId": [
-                { required: true, message: '请选择课程', trigger: 'change' }
-            ],
-            "chapterId": [
-                { required: true, message: '请选择大章', trigger: 'change' }
-            ],
-            "video": [
-                { required: true, message: '请选择视频', trigger: 'change' }
+            "summary": [
+                { required: true, message: '请选择概述', trigger: 'change' }
             ],
             "time": [
                 { required: true, message: '请选择时长', trigger: 'change' }
             ],
+            "price": [
+                { required: true, message: '请选择价格(元)', trigger: 'change' }
+            ],
+            "image": [
+                { required: true, message: '请选择封面', trigger: 'change' }
+            ],
+            "level": [
+                { required: true, message: '请选择级别', trigger: 'change' }
+            ],
             "charge": [
                 { required: true, message: '请选择收费', trigger: 'change' }
+            ],
+            "status": [
+                { required: true, message: '请选择状态', trigger: 'change' }
+            ],
+            "enroll": [
+                { required: true, message: '请选择报名数', trigger: 'change' }
             ],
             "sort": [
                 { required: true, message: '请选择顺序', trigger: 'change' }
@@ -173,32 +233,35 @@ export default {
         },
         form:{
             "id":'',
-            "title":'',
-            "courseId":'',
-            "chapterId":'',
-            "video":'',
+            "name":'',
+            "summary":'',
             "time":'',
+            "price":'',
+            "image":'',
+            "level":'',
             "charge":'',
+            "status":'',
+            "enroll":'',
             "sort":'',
             "createAt":'',
             "updateAt":'',
         },
-        dialogFormSectionVisible:false,
+        dialogFormCourseVisible:false,
         formLabelWidth: '100px',
         total: 0,
         params: {
           page: 1,
           size: 5,
-          "title":''
+          "name":''
         },
         multipleSelection: [],
         tableData: []
       }
     },
     methods: {
-      openSectionHtml(formName){
-        this.dialogFormSectionVisible = true;
-        this.title="添加小节";
+      openCourseHtml(formName){
+        this.dialogFormCourseVisible = true;
+        this.title="添加课程表";
         this.$nextTick(function(){
           this.$refs[formName].clearValidate()
         })
@@ -215,14 +278,14 @@ export default {
 
         this.$refs[formName].validate(async (valid) => {
           if (valid) {
-            const res = await this.$api.BUSINESS_SECTION_ADD(this.form);
+            const res = await this.$api.BUSINESS_COURSE_ADD(this.form);
           if(res.code==0){
             this.$notify({
             title: '成功',
             message: res.msg,
             type: 'success'
           });
-          this.dialogFormSectionVisible = false;
+          this.dialogFormCourseVisible = false;
           this.resetForm(formName);
           this.getTableData();
           }else{
@@ -239,19 +302,22 @@ export default {
       },
       handleClickEdit(row) {
         console.log(row);
-        this.dialogFormSectionVisible = true;
-        this.title="修改小节";
+        this.dialogFormCourseVisible = true;
+        this.title="修改课程表";
           this.form.id = row.id;
-          this.form.title = row.title;
-          this.form.courseId = row.courseId;
-          this.form.chapterId = row.chapterId;
-          this.form.video = row.video;
+          this.form.name = row.name;
+          this.form.summary = row.summary;
           this.form.time = row.time;
+          this.form.price = row.price;
+          this.form.image = row.image;
+          this.form.level = row.level;
           this.form.charge = row.charge;
+          this.form.status = row.status;
+          this.form.enroll = row.enroll;
           this.form.sort = row.sort;
           this.form.createAt = row.createAt;
           this.form.updateAt = row.updateAt;
-        console.log("修改小节 form: =======================");
+        console.log("修改课程表 form: =======================");
         console.log(this.form);
       },
       del(id){
@@ -260,7 +326,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(async () => {
-          const res = await this.$api.BUSINESS_SECTION_DEL(id);
+          const res = await this.$api.BUSINESS_COURSE_DEL(id);
           if(res.code==0){
               this.$notify({
               title: '成功',
@@ -295,8 +361,8 @@ export default {
       },
       async getTableData () {
         try {
-          const res = await this.$api.BUSINESS_SECTION(this.params);
-          console.log("分页查询小节:");
+          const res = await this.$api.BUSINESS_COURSE(this.params);
+          console.log("分页查询课程表:");
           console.log(res);
           this.tableData = res.data.list;
           this.total = res.data.total;

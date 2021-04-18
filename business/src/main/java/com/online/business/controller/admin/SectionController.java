@@ -24,7 +24,7 @@ public class SectionController {
 
     @Resource
     private SectionService sectionService;
-    private static final String BUSINESS_NAME = "小节";
+    public static final String BUSINESS_NAME = "小节";
 
     /**
      * 分页查询

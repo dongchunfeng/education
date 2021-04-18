@@ -49,11 +49,11 @@ public class ServerGenerator {
 
 
         //搜索框名字
-        String title = "标题";
+        String title = "名称";
         //搜索的参数
-        String Title = "title";
+        String Title = "name";
         //api名字
-        String SECTION = "SECTION";
+        String SECTION = "COURSE";
         //val
         String val = "${val}";
 

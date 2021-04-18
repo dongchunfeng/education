@@ -3,9 +3,23 @@
     <el-dialog :title="title" :visible.sync="dialogForm${Domain}Visible">
   <el-form :model="form" label-width="80px" :rules="rules" ref="ruleForm">
       <#list fieldList as field>
-          <el-form-item label="${field.nameCn}" prop="${field.nameHump}" required>
+          <#if field.name!='id' && field.nameHump!='createAt'&&field.nameHump!='updateAt'>
+              <el-form-item label="${field.nameCn}" prop="${field.nameHump}">
+              <#if field.enums>
+                      <el-select v-model="form.${field.nameHump}" placeholder="请选择">
+                          <el-option
+                                  v-for="item in ${field.enumsConst}"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                          </el-option>
+                      </el-select>
+
+              <#else>
               <el-input v-model="form.${field.nameHump}" autocomplete="off"></el-input>
-           </el-form-item>
+              </#if>
+              </el-form-item>
+          </#if>
       </#list>
   </el-form>
   <div slot="footer" class="dialog-footer">
@@ -32,12 +46,13 @@
       width="55">
     </el-table-column>
     <#list fieldList as field>
-        <el-table-column
-
-                prop="${field.nameHump}"
-                label="${field.nameCn}"
-                width="100">
-        </el-table-column>
+        <#if field.nameHump!='createAt' && field.nameHump!='updateAt'>
+            <el-table-column
+                    prop="${field.nameHump}"
+                    label="${field.nameCn}"
+                    width="100">
+            </el-table-column>
+        </#if>
     </#list>
 
     <el-table-column

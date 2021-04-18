@@ -1,6 +1,5 @@
 package com.online.business.controller.admin;
 
-import com.online.server.domain.Chapter;
 import com.online.server.dto.ChapterDto;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.QueryChapterDto;
@@ -9,7 +8,6 @@ import com.online.server.service.ChapterService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @Description
@@ -24,7 +22,7 @@ public class ChapterController {
 
     @Resource
     private ChapterService chapterService;
-    private static final String BUSINESS_NAME = "大章";
+    public static final String BUSINESS_NAME = "大章";
 
     /**
      * 分页查询

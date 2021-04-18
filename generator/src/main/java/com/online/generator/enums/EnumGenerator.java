@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class EnumGenerator {
     //    static String path = "admin\\public\\static\\js\\enums.js";
-    static String path = "web\\public\\static\\js\\enums.js";
+    static String path = "generator\\src\\main\\java\\com\\online\\generator\\vue\\enum\\enums.js";
 
     public static void main(String[] args) {
         StringBuffer bufferObject = new StringBuffer();
@@ -51,9 +51,9 @@ public class EnumGenerator {
         for (int i = 0; i < objects.length; i++) {
             Object obj = objects[i];
             if (getCode == null) {
-                bufferObject.append(name.invoke(obj)).append(":{key:\"").append(name.invoke(obj)).append("\", value:\"").append(getDesc.invoke(obj)).append("\"}");
+                bufferObject.append(name.invoke(obj)).append(":{value:\"").append(name.invoke(obj)).append("\", label:\"").append(getDesc.invoke(obj)).append("\"}");
             } else {
-                bufferObject.append(name.invoke(obj)).append(":{key:\"").append(getCode.invoke(obj)).append("\", value:\"").append(getDesc.invoke(obj)).append("\"}");
+                bufferObject.append(name.invoke(obj)).append(":{value:\"").append(getCode.invoke(obj)).append("\", label:\"").append(getDesc.invoke(obj)).append("\"}");
             }
             if (i < objects.length - 1) {
                 bufferObject.append(",");
@@ -62,13 +62,13 @@ public class EnumGenerator {
         bufferObject.append("};\r\n");
 
         // 生成数组
-        bufferArray.append(key).append("_ARRAY=[");
+        bufferArray.append(key).append(":[");
         for (int i = 0; i < objects.length; i++) {
             Object obj = objects[i];
             if (getCode == null) {
-                bufferArray.append("{key:\"").append(name.invoke(obj)).append("\", value:\"").append(getDesc.invoke(obj)).append("\"}");
+                bufferArray.append("{value:\"").append(name.invoke(obj)).append("\", label:\"").append(getDesc.invoke(obj)).append("\"}");
             } else {
-                bufferArray.append("{key:\"").append(getCode.invoke(obj)).append("\", value:\"").append(getDesc.invoke(obj)).append("\"}");
+                bufferArray.append("{value:\"").append(getCode.invoke(obj)).append("\", label:\"").append(getDesc.invoke(obj)).append("\"}");
             }
             if (i < objects.length - 1) {
                 bufferArray.append(",");

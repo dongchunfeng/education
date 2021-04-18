@@ -7,6 +7,7 @@ import com.online.server.domain.SectionExample;
 import com.online.server.dto.SectionDto;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.ResponseDto;
+import com.online.server.enums.SectionChargeEnum;
 import com.online.server.mapper.SectionMapper;
 import com.online.server.util.CopyUtil;
 import com.online.server.util.UuidUtil;
@@ -17,6 +18,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Date;
+
+
 
 /**
  * @Description
@@ -44,6 +49,7 @@ public class SectionService {
         pageDto.setSize(size);
         PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
         SectionExample sectionExample = new SectionExample();
+        sectionExample.setOrderByClause("sort desc");
         if (StringUtils.isNotBlank(title)) {
             sectionExample.createCriteria().andTitleLike("%" + title + "%");
         }
@@ -98,7 +104,11 @@ public class SectionService {
      * @return
      */
     private int insert(Section section) {
+        Date now = new Date();
+        section.setCreateAt(now);
+        section.setUpdateAt(now);
         section.setId(UuidUtil.getShortUuid());
+        section.setCharge(SectionChargeEnum.CHARGE.getCode());
         return sectionMapper.insert(section);
     }
 
@@ -108,6 +118,7 @@ public class SectionService {
      * @return
      */
     private int update(Section section) {
+        section.setUpdateAt(new Date());
         return sectionMapper.updateByPrimaryKey(section);
     }
 

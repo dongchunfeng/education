@@ -18,6 +18,14 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+<#list typeSet as type>
+    <#if type=='Date'>
+import java.util.Date;
+    </#if>
+</#list>
+
+
+
 /**
  * @Description
  * @Author Mr.Dong <dongcf1997@163.com>
@@ -44,6 +52,11 @@ public class ${Domain}Service {
         pageDto.setSize(size);
         PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
         ${Domain}Example ${domain}Example = new ${Domain}Example();
+        <#list fieldList as field>
+            <#if field.nameHump=='sort'>
+        ${domain}Example.setOrderByClause("sort desc");
+            </#if>
+        </#list>
         if (StringUtils.isNotBlank(${searchname})) {
             ${domain}Example.createCriteria().and${Searchname}Like("%" + ${searchname} + "%");
         }
@@ -98,6 +111,15 @@ public class ${Domain}Service {
      * @return
      */
     private int insert(${Domain} ${domain}) {
+        Date now = new Date();
+        <#list fieldList as field>
+            <#if field.nameHump=='createAt'>
+        ${domain}.setCreateAt(now);
+            </#if>
+            <#if field.nameHump=='updateAt'>
+        ${domain}.setUpdateAt(now);
+            </#if>
+        </#list>
         ${domain}.setId(UuidUtil.getShortUuid());
         return ${domain}Mapper.insert(${domain});
     }
@@ -108,6 +130,11 @@ public class ${Domain}Service {
      * @return
      */
     private int update(${Domain} ${domain}) {
+        <#list fieldList as field>
+            <#if field.nameHump=='updateAt'>
+        ${domain}.setUpdateAt(new Date());
+            </#if>
+        </#list>
         return ${domain}Mapper.updateByPrimaryKey(${domain});
     }
 
@@ -118,16 +145,7 @@ public class ${Domain}Service {
         return ${domain}Mapper.deleteByPrimaryKey(id);
     }
 
-    /**
-     * 查询某一课程下的所有${tableNameCn}
-     */
-    public List<${Domain}Dto> listByCourse(String courseId) {
-        ${Domain}Example example = new ${Domain}Example();
-        example.createCriteria().andCourseIdEqualTo(courseId);
-        List<${Domain}> ${domain}List = ${domain}Mapper.selectByExample(example);
-        List<${Domain}Dto> ${domain}DtoList = CopyUtil.copyList(${domain}List, ${Domain}Dto.class);
-        return ${domain}DtoList;
-    }
+
 
 
 }

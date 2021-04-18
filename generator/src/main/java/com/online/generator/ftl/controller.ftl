@@ -24,7 +24,7 @@ public class ${Domain}Controller {
 
     @Resource
     private ${Domain}Service ${domain}Service;
-    private static final String BUSINESS_NAME = "${tableNameCn}";
+    public static final String BUSINESS_NAME = "${tableNameCn}";
 
     /**
      * 分页查询
