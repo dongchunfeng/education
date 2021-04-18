@@ -2,8 +2,6 @@ package com.online.server.dto;
 
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
  * @Description
  * @Author Mr.Dong <dongcf1997@163.com>
@@ -15,5 +13,6 @@ import java.io.Serializable;
 public class QueryChapterDto {
 
     String daname;
+    String courseId;
 
 }

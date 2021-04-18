@@ -100,8 +100,9 @@
                 </el-button-group>
               </p>
               <span style="float:right;">
+                <el-button @click="toChapter(o)" type="success" size="small" plain>大章</el-button>
                 <el-button @click="handleClickEdit(o)" type="success" size="small" plain>编辑</el-button>
-              <el-button type="danger" size="small" @click="del(o.id)" plain>删除</el-button>
+                <el-button type="danger" size="small" @click="del(o.id)" plain>删除</el-button>
               </span>
             </div>
           </div>
@@ -444,6 +445,10 @@ export default {
         } catch (error) {
           console.log(error)
         }
+      },
+      toChapter(course){
+          SessionStorage.set("course",course);
+          this.$router.push("/chapter");
       }
     }
   }

@@ -6,6 +6,7 @@ import com.online.server.domain.Chapter;
 import com.online.server.domain.ChapterExample;
 import com.online.server.dto.ChapterDto;
 import com.online.server.dto.PageDto;
+import com.online.server.dto.QueryChapterDto;
 import com.online.server.dto.ResponseDto;
 import com.online.server.mapper.ChapterMapper;
 import com.online.server.util.CopyUtil;
@@ -35,17 +36,21 @@ public class ChapterService {
      * 分页查询
      * @param page
      * @param size
-     * @param name
+     * @param qs
      * @return
      */
-    public PageDto findAll(int page, int size, String name) {
+    public PageDto findAll(int page, int size, QueryChapterDto qs) {
         PageDto pageDto = new PageDto();
         pageDto.setPage(page);
         pageDto.setSize(size);
         PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
         ChapterExample chapterExample = new ChapterExample();
-        if (StringUtils.isNotBlank(name)) {
-            chapterExample.createCriteria().andNameLike("%" + name + "%");
+        ChapterExample.Criteria criteria = chapterExample.createCriteria();
+        if (StringUtils.isNotBlank(qs.getDaname())) {
+            criteria.andNameLike("%" + qs.getDaname() + "%");
+        }
+        if (StringUtils.isNotBlank(qs.getCourseId())) {
+            criteria.andCourseIdEqualTo( qs.getCourseId());
         }
         List<Chapter> chapters = chapterMapper.selectByExample(chapterExample);
         PageInfo<Chapter> pageInfo = new PageInfo<>(chapters);

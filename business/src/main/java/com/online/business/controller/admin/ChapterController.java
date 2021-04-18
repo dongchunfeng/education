@@ -33,7 +33,7 @@ public class ChapterController {
      */
     @RequestMapping(path = "/chapter/{page}/{size}", method = RequestMethod.GET)
     public ResponseDto list(@PathVariable int page, @PathVariable int size, QueryChapterDto qs) {
-        PageDto all = chapterService.findAll(page, size, qs.getDaname());
+        PageDto all = chapterService.findAll(page, size, qs);
         return new ResponseDto().ok(0, "大章列表查询成功", all);
     }
 

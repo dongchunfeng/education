@@ -5,11 +5,10 @@
     <el-form-item label="名称" prop="name" required>
       <el-input v-model="form.name" autocomplete="off"></el-input>
     </el-form-item>
-    <el-form-item label="课程Id" prop="courseId" required>
-      <el-select v-model="form.courseId" placeholder="请选择课程Id">
-        <el-option label="语文" value="00000000"></el-option>
-        <el-option label="数学" value="00000001"></el-option>
-      </el-select>
+    <el-form-item label="课程" prop="courseId">
+      
+      {{course.name}}
+      
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
@@ -19,10 +18,16 @@
   </div>
 </el-dialog>
     <template slot="header">
+      <h3>
+        {{course.name}}
+      </h3>
       <el-form :model="params">
       名称:<el-input v-model="params.daname" style="width:100px;margin-right:5px"></el-input>
       <el-button type="primary" v-on:click="getTableData" size="small" style="margin-right:5px">查询</el-button>
-      <el-button type="primary" v-on:click="openChapterHtml('ruleForm')" size="small">新增大章</el-button>
+      <el-button type="primary" v-on:click="openChapterHtml('ruleForm')" style="margin-right:5px" size="small">新增大章</el-button>
+      <router-link round to="/course">
+        <el-button type="primary" v-on:click="openChapterHtml('ruleForm')" size="small">返回课程</el-button>
+      </router-link>
     </el-form>
     </template>
     <el-table
@@ -82,11 +87,20 @@
 <script>
 export default {
     name: 'chapter',
+    mounted(){
+        let course = SessionStorage.get("course") || {};
+        if(Tool.isEmpty(course)){
+            this.$$router.push("/course");
+        }
+        this.course = course;
+        this.getTableData();
+    },
     created(){
-      this.getTableData();
+      
     },
      data() {
       return {
+        course:{},
         visible: false,
         title:"",
         ruleForm: {
@@ -97,10 +111,7 @@ export default {
           name:[
             { required: true, message: '请输入名称', trigger: 'blur' },
             { min: 3, max: 7, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-          ],
-          region: [
-            { required: true, message: '请选择课程id', trigger: 'change' }
-          ],
+          ]
         },
         form:{
           id:"",
@@ -113,7 +124,8 @@ export default {
         params: {
           page: 1,
           size: 5,
-          daname:''
+          daname: '',
+          courseId: '',
         },
         multipleSelection: [],
         tableData: []
@@ -139,6 +151,9 @@ export default {
         
         this.$refs[formName].validate(async (valid) => {
           if (valid) {
+            this.form.courseId = this.course.id;
+            console.log("保存时赋值===============");
+            console.log(this.form.courseId);
             const res = await this.$api.BUSINESS_CHAPTER_ADD(this.form);
           if(res.code==0){
             this.$notify({
@@ -212,6 +227,7 @@ export default {
       },
       async getTableData () {
         try {
+          this.params.courseId = this.course.id;
           const res = await this.$api.BUSINESS_CHAPTER(this.params);
           console.log("分页查询大章:");
           console.log(res);
