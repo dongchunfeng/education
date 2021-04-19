@@ -6,10 +6,12 @@
                   <el-input v-model="form.title" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="课程" prop="courseId">
-                  <el-input v-model="form.courseId" autocomplete="off"></el-input>
+                  {{course.name}}
+                  <!-- <el-input v-model="form.courseId" autocomplete="off"></el-input> -->
               </el-form-item>
               <el-form-item label="大章" prop="chapterId">
-                  <el-input v-model="form.chapterId" autocomplete="off"></el-input>
+                 {{chapter.name}}
+                  <!-- <el-input v-model="form.chapterId" autocomplete="off"></el-input> -->
               </el-form-item>
               <el-form-item label="视频" prop="video">
                   <el-input v-model="form.video" autocomplete="off"></el-input>
@@ -38,6 +40,16 @@
   </div>
 </el-dialog>
     <template slot="header">
+      <p >
+        <router-link to="/course" style="color:#409EFF;font-size:25px;">
+        <i class="el-icon-caret-right"></i>
+          {{course.name}}
+        </router-link>
+        <router-link to="/chapter" style="color:#409EFF;font-size:25px;">
+        <i class="el-icon-caret-right"></i>
+          :&nbsp;{{chapter.name}}
+        </router-link>
+      </p>
       <el-form :model="params">
       标题:<el-input v-model="params.title" style="width:100px;margin-right:5px"></el-input>
       <el-button type="primary" v-on:click="getTableData" size="small" style="margin-right:5px">查询</el-button>
@@ -126,12 +138,21 @@
 
 <script>
 export default {
-    name: 'section',
-    created(){
+    name: 'sections',
+    mounted(){
+      let chapter = SessionStorage.get("chapter")||{};
+      let course = SessionStorage.get("course")||{};
+      this.chapter = chapter;
+      this.course = course;
       this.getTableData();
+    },
+    created(){
+      
     },
      data() {
       return {
+        course:{},
+        chapter:{},
         visible: false,
         title:"",
         charge1:[{
@@ -162,10 +183,10 @@ export default {
                 { required: true, message: '请选择标题', trigger: 'change' }
             ],
             "courseId": [
-                { required: true, message: '请选择课程', trigger: 'change' }
+                { required: false, message: '请选择课程', trigger: 'change' }
             ],
             "chapterId": [
-                { required: true, message: '请选择大章', trigger: 'change' }
+                { required: false, message: '请选择大章', trigger: 'change' }
             ],
             "video": [
                 { required: false, message: '请选择视频', trigger: 'change' }
@@ -198,7 +219,9 @@ export default {
         params: {
           page: 1,
           size: 5,
-          "title":''
+          "title":'',
+          courseId:'',
+          chapterId:''
         },
         multipleSelection: [],
         tableData: []
@@ -224,6 +247,8 @@ export default {
 
         this.$refs[formName].validate(async (valid) => {
           if (valid) {
+            this.form.courseId = this.course.id;
+            this.form.chapterId = this.chapter.id;
             const res = await this.$api.BUSINESS_SECTION_ADD(this.form);
           if(res.code==0){
             this.$notify({
@@ -309,6 +334,8 @@ export default {
       },
       async getTableData () {
         try {
+          this.params.courseId = this.course.id;
+          this.params.chapterId = this.chapter.id;
           const res = await this.$api.BUSINESS_SECTION(this.params);
           console.log("分页查询小节:");
           console.log(res);

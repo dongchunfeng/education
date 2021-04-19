@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.online.server.domain.Section;
 import com.online.server.domain.SectionExample;
+import com.online.server.dto.QuerySectionDto;
 import com.online.server.dto.SectionDto;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.ResponseDto;
@@ -40,18 +41,25 @@ public class SectionService {
      * 分页查询
      * @param page
      * @param size
-     * @param title
+     * @param qs
      * @return
      */
-    public PageDto findAll(int page, int size, String title) {
+    public PageDto findAll(int page, int size, QuerySectionDto qs) {
         PageDto pageDto = new PageDto();
         pageDto.setPage(page);
         pageDto.setSize(size);
         PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
         SectionExample sectionExample = new SectionExample();
         sectionExample.setOrderByClause("sort desc");
-        if (StringUtils.isNotBlank(title)) {
-            sectionExample.createCriteria().andTitleLike("%" + title + "%");
+        SectionExample.Criteria criteria = sectionExample.createCriteria();
+        if (StringUtils.isNotBlank(qs.getTitle())) {
+            criteria.andTitleLike("%" + qs.getTitle() + "%");
+        }
+        if (StringUtils.isNotBlank(qs.getTitle())) {
+            criteria.andCourseIdEqualTo( qs.getCourseId());
+        }
+        if (StringUtils.isNotBlank(qs.getChapterId())) {
+            criteria.andChapterIdEqualTo( qs.getChapterId());
         }
         List<Section> sections = sectionMapper.selectByExample(sectionExample);
         PageInfo<Section> pageInfo = new PageInfo<>(sections);

@@ -1,15 +1,13 @@
 package com.online.business.controller.admin;
 
-import com.online.server.domain.Section;
-import com.online.server.dto.SectionDto;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.QuerySectionDto;
 import com.online.server.dto.ResponseDto;
+import com.online.server.dto.SectionDto;
 import com.online.server.service.SectionService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @Description
@@ -35,7 +33,7 @@ public class SectionController {
      */
     @RequestMapping(path = "/section/{page}/{size}", method = RequestMethod.GET)
     public ResponseDto list(@PathVariable int page, @PathVariable int size, QuerySectionDto qs) {
-        PageDto all = sectionService.findAll(page, size, qs.getTitle());
+        PageDto all = sectionService.findAll(page, size, qs);
         return new ResponseDto().ok(0, "小节列表查询成功", all);
     }
 

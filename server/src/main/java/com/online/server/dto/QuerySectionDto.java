@@ -13,5 +13,7 @@ import lombok.Data;
 public class QuerySectionDto {
 
     String title;
+    String courseId;
+    String chapterId;
 
 }

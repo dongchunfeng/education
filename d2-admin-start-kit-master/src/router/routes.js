@@ -87,7 +87,7 @@ const frameIn = [
       },
       {
         path: 'section',
-        name: 'section',
+        name: 'sections',
         meta: {
           title: '小节管理',
           auth: true

@@ -18,14 +18,17 @@
   </div>
 </el-dialog>
     <template slot="header">
-      <h3>
-        {{course.name}}
-      </h3>
+      <p >
+        <router-link to="/course" style="color:#409EFF;font-size:25px;">
+        <i class="el-icon-caret-right"></i>
+          {{course.name}}
+        </router-link>
+      </p>
       <el-form :model="params">
       名称:<el-input v-model="params.daname" style="width:100px;margin-right:5px"></el-input>
       <el-button type="primary" v-on:click="getTableData" size="small" style="margin-right:5px">查询</el-button>
       <el-button type="primary" v-on:click="openChapterHtml('ruleForm')" style="margin-right:5px" size="small">新增大章</el-button>
-      <router-link round to="/course">
+      <router-link to="/course">
         <el-button type="primary" v-on:click="openChapterHtml('ruleForm')" size="small">返回课程</el-button>
       </router-link>
     </el-form>
@@ -46,20 +49,21 @@
       width="100">
     </el-table-column>
     <el-table-column
-      prop="courseId"
-      label="课程"
-      width="120">
-    </el-table-column>
-    <el-table-column
       prop="name"
       label="大章名称"
       width="120">
     </el-table-column>
     <el-table-column
+      prop="courseId"
+      label="课程"
+      width="100">
+    </el-table-column>
+    <el-table-column
       fixed="right"
       label="操作"
-      width="100">
+      width="120">
       <template slot-scope="scope">
+        <el-button @click="toSections(scope.row)" type="text" size="small">小节</el-button>
         <el-button @click="handleClickEdit(scope.row)" type="text" size="small">编辑</el-button>
         <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
       </template>
@@ -89,9 +93,9 @@ export default {
     name: 'chapter',
     mounted(){
         let course = SessionStorage.get("course") || {};
-        if(Tool.isEmpty(course)){
-            this.$$router.push("/course");
-        }
+        // if(Tool.isEmpty(course)){
+        //     this.$router.push("/course");
+        // }
         this.course = course;
         this.getTableData();
     },
@@ -132,6 +136,10 @@ export default {
       }
     },
     methods: {
+      toSections(chapter){
+          SessionStorage.set("chapter",chapter);
+          this.$router.push("/section");
+      },
       openChapterHtml(formName){
         this.dialogFormChapterVisible = true;
         this.title="添加大章";
