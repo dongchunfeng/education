@@ -41,7 +41,6 @@
     style="width: 100%"
     @selection-change="handleSelectionChange">
     <el-table-column
-      fixed
       type="selection"
       width="55">
     </el-table-column>
@@ -56,7 +55,6 @@
     </#list>
 
     <el-table-column
-      fixed="right"
       label="操作"
       width="100">
       <template slot-scope="scope">
@@ -102,7 +100,7 @@ export default {
         rules: {
           <#list fieldList as field >
             "${field.nameHump}": [
-                { required: true, message: '请选择${field.nameCn}', trigger: 'change' }
+                { required: false, message: '请选择${field.nameCn}', trigger: 'change' }
             ],
           </#list>
         },

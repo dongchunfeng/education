@@ -14,6 +14,7 @@ import com.online.server.util.CopyUtil;
 import com.online.server.util.UuidUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,6 +37,8 @@ public class SectionService {
 
     @Resource
     private SectionMapper sectionMapper;
+    @Autowired
+    private CourseService courseService;
 
     /**
      * 分页查询
@@ -88,22 +91,17 @@ public class SectionService {
 
     public ResponseDto save(SectionDto sectionDto) {
         Section section = CopyUtil.copy(sectionDto, Section.class);
+
         if (StringUtils.isBlank(sectionDto.getId())) {
             if(this.findSectionByTitle(sectionDto.getTitle())){
                 return ResponseDto.fail(1, "小节名称重复,请重新输入!");
             }
-            int insert = this.insert(section);
-            if (insert > 0) {
-                return ResponseDto.ok(0, "小节添加成功");
-            }
-            return ResponseDto.fail(1, "小节添加失败");
+            this.insert(section);
         } else {
-            int update = this.update(section);
-            if (update > 0) {
-                return ResponseDto.ok(0, "小节修改成功");
-            }
-            return ResponseDto.fail(1, "小节修改失败");
+            this.update(section);
         }
+        courseService.updateTime(sectionDto.getCourseId());
+        return ResponseDto.fail(0, "小节添加成功!");
     }
 
     /**

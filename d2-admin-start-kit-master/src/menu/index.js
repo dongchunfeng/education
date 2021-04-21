@@ -34,7 +34,7 @@ export const menuHeader = supplementPath([
       { path: '/course', title: '课程管理' },
       { path: '/lecturer', title: '讲师管理' },
       { path: '/chapter', title: '大章管理' },
-      { path: '/section', title: '小节管理' }
+      // { path: '/section', title: '小节管理' }
     ]
   }
 ])
@@ -58,7 +58,7 @@ export const menuAside = supplementPath([
       { path: '/course', title: '课程管理' },
       { path: '/lecturer', title: '讲师管理' },
       { path: '/chapter', title: '大章管理' },
-      { path: '/section', title: '小节管理' }
+      // { path: '/section', title: '小节管理' }
       
     ]
   }

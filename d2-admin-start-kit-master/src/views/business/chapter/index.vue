@@ -5,10 +5,11 @@
     <el-form-item label="名称" prop="name" required>
       <el-input v-model="form.name" autocomplete="off"></el-input>
     </el-form-item>
-    <el-form-item label="课程" prop="courseId">
-      
+    <el-form-item label="课程" prop="courseId" v-if="course">
       {{course.name}}
-      
+    </el-form-item>
+    <el-form-item label="课程" prop="courseId" v-if="!course">
+      <el-input v-model="form.courseId" autocomplete="off" disabled></el-input>
     </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
@@ -33,9 +34,10 @@
       </router-link>
     </el-form>
     </template>
+    <template>
     <el-table
     :data="tableData"
-    border
+    stripe
     style="width: 100%"
     @selection-change="handleSelectionChange">
     <el-table-column
@@ -43,7 +45,6 @@
       width="55">
     </el-table-column>
     <el-table-column
-      fixed
       prop="id"
       label="id"
       width="100">
@@ -59,7 +60,6 @@
       width="100">
     </el-table-column>
     <el-table-column
-      fixed="right"
       label="操作"
       width="120">
       <template slot-scope="scope">
@@ -79,6 +79,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    </template>
   </d2-container>
 </template>
 
@@ -93,9 +94,9 @@ export default {
     name: 'chapter',
     mounted(){
         let course = SessionStorage.get("course") || {};
-        // if(Tool.isEmpty(course)){
-        //     this.$router.push("/course");
-        // }
+        if(Tool.isEmpty(course)){
+            this.$router.push("/course");
+        }
         this.course = course;
         this.getTableData();
     },
@@ -113,8 +114,7 @@ export default {
         },
         rules: {
           name:[
-            { required: true, message: '请输入名称', trigger: 'blur' },
-            { min: 3, max: 7, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+            { required: true, message: '请输入名称', trigger: 'blur' }
           ]
         },
         form:{

@@ -8,8 +8,10 @@ import com.online.server.dto.CourseDto;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.ResponseDto;
 import com.online.server.mapper.CourseMapper;
+import com.online.server.mapper.my.MyCourseMapper;
 import com.online.server.util.CopyUtil;
 import com.online.server.util.UuidUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,14 @@ import java.util.Date;
  * @Date 2021/4/9 14:24
  */
 @Service
+@Slf4j
 public class CourseService {
 
     @Resource
     private CourseMapper courseMapper;
+
+    @Resource
+    private MyCourseMapper myCourseMapper;
 
     /**
      * 分页查询
@@ -127,7 +133,10 @@ public class CourseService {
         return courseMapper.deleteByPrimaryKey(id);
     }
 
-
+    public void updateTime(String courseId){
+        log.info("更新总时长: {}"+courseId);
+        myCourseMapper.updateTime(courseId);
+    }
 
 
 }

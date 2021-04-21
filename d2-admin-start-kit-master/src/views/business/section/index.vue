@@ -5,13 +5,19 @@
               <el-form-item label="标题" prop="title">
                   <el-input v-model="form.title" autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="课程" prop="courseId">
+              <el-form-item label="课程" prop="courseId" v-if="course">
                   {{course.name}}
                   <!-- <el-input v-model="form.courseId" autocomplete="off"></el-input> -->
               </el-form-item>
-              <el-form-item label="大章" prop="chapterId">
+              <el-form-item label="课程" prop="courseId" v-if="!course">
+                  <el-input v-model="form.courseId" autocomplete="off" disabled></el-input>
+              </el-form-item>
+              <el-form-item label="大章" prop="chapterId" v-if="chapter">
                  {{chapter.name}}
                   <!-- <el-input v-model="form.chapterId" autocomplete="off"></el-input> -->
+              </el-form-item>
+              <el-form-item label="大章" prop="chapterId" v-if="!chapter">
+                  <el-input v-model="form.chapterId" autocomplete="off" disabled></el-input>
               </el-form-item>
               <el-form-item label="视频" prop="video">
                   <el-input v-model="form.video" autocomplete="off"></el-input>
@@ -62,7 +68,6 @@
     style="width: 100%"
     @selection-change="handleSelectionChange">
     <el-table-column
-      fixed
       type="selection"
       width="55">
     </el-table-column>
@@ -108,7 +113,6 @@
             </el-table-column>
 
     <el-table-column
-      fixed="right"
       label="操作"
       width="100">
       <template slot-scope="scope">
@@ -142,6 +146,9 @@ export default {
     mounted(){
       let chapter = SessionStorage.get("chapter")||{};
       let course = SessionStorage.get("course")||{};
+      if (Tool.isEmpty(course) || Tool.isEmpty(chapter)) {
+        _this.$router.push("/course");
+      }
       this.chapter = chapter;
       this.course = course;
       this.getTableData();

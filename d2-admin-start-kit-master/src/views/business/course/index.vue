@@ -93,7 +93,7 @@
             <div class="bottom clearfix">
               <time class="time">{{ o.summary }}</time>
               <p>
-                <el-button-group>
+                <el-button-group style="margin-right:-3px;">
                 <el-button type="primary" size="mini" round>{{ o.id }}</el-button>
                 <el-button type="primary" size="mini" round>排序:{{ o.sort }}</el-button>
                 <el-button type="primary" size="mini" round>时长:{{ o.time }}</el-button>

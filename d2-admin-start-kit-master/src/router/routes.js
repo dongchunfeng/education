@@ -91,6 +91,7 @@ const frameIn = [
         meta: {
           title: '小节管理',
           auth: true
+          
         },
         component: _import('business/section')
       },
