@@ -10,8 +10,8 @@ import lombok.Data;
 * @Date 2021/4/14 19:02
 */
 @Data
-public class Query${Domain}Dto {
+public class QueryCategoryDto {
 
-    String ${searchname};
+    String name;
 
 }

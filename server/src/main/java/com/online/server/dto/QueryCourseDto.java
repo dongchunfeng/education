@@ -12,6 +12,6 @@ import lombok.Data;
 @Data
 public class QueryCourseDto {
 
-    String Name;
+    String name;
 
 }
