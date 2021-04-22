@@ -133,5 +133,22 @@ Tool = {
       }
     }
     return false;
+  },
+  dispatch : function(el ,type){
+    try{
+        if(el.dispatchEvent){
+            var evt = document.createEvent('Event');
+
+            evt.initEvent(type,true,true);
+
+            el.dispatchEvent(evt);
+
+        }else if(el.fireEvent){
+            el.fireEvent('on'+type);
+
+        }
+
+    }catch(e){};
+
   }
 };

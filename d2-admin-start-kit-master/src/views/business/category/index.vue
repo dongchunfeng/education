@@ -1,7 +1,7 @@
 <template>
   <d2-container>
     <el-row>
-      <el-col :span="12" class="d2-m3">
+      <el-col :span="11" class="d2-mr">
         <div class="grid-content bg-purple">
           <el-dialog :title="title" :visible.sync="dialogFormCategoryVisible">
             <el-form
@@ -10,8 +10,9 @@
               :rules="rules"
               ref="ruleForm"
             >
-              <el-form-item label="父id" prop="parent">
-                <el-input v-model="form.parent" autocomplete="off"></el-input>
+              <el-form-item label="父分类" prop="parent">
+                <!-- <el-input v-model="form.parent" autocomplete="off"></el-input> -->
+                <span> {{active.name || '无'}} </span>
               </el-form-item>
               <el-form-item label="名称" prop="name">
                 <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -45,19 +46,22 @@
               > -->
               <el-button
                 type="primary"
-                v-on:click="openCategoryHtml('ruleForm')"
+                v-on:click="openCategoryHtml1('ruleForm')"
                 size="small"
-                >新增分类表</el-button
+                >新增一级分类</el-button
               >
             </el-form>
           </div>
           <el-table
+            id="categoryTableLeft"
             :data="level1"
             border
             style="width: 100%"
             @selection-change="handleSelectionChange"
-            @cell-click="cellclick"
-            :cell-style="tableCellStyle"
+            @row-click="rowclick"
+            :row-style ="tableRowStyle"
+            :row-class-name="tableRowClass"
+            @cell-mouse-enter="tableCellMouseEnter"
           >
             <el-table-column type="selection" width="55"> </el-table-column>
             <el-table-column prop="id" label="id" width="100">
@@ -67,14 +71,14 @@
             <el-table-column prop="sort" label="顺序" width="60">
             </el-table-column>
 
-            <el-table-column label="操作" width="130">
+            <el-table-column label="操作" width="100">
               <template slot-scope="scope">
-                <el-button
+                <!-- <el-button
                   @click="onClickLevel1(scope.row)"
                   type="text"
                   size="small"
                   >二级分类</el-button
-                >
+                > -->
                 <el-button
                   @click="handleClickEdit(scope.row)"
                   type="text"
@@ -91,15 +95,16 @@
       </el-col>
       <el-col :span="12">
         <div class="grid-content bg-purple-light">
-          <el-dialog :title="title" :visible.sync="dialogFormCategoryVisible">
+          <el-dialog :title="title" :visible.sync="dialogFormCategoryVisible1">
             <el-form
               :model="form"
               label-width="80px"
               :rules="rules"
               ref="ruleForm"
             >
-              <el-form-item label="父id" prop="parent">
-                <el-input v-model="form.parent" autocomplete="off"></el-input>
+              <el-form-item label="父分类" prop="parent">
+                <!-- <el-input v-model="form.parent" autocomplete="off"></el-input> -->
+                <span> {{active.name || '无'}} </span>
               </el-form-item>
               <el-form-item label="名称" prop="name">
                 <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -110,7 +115,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
               <el-button @click="resetForm('ruleForm')">重置</el-button>
-              <el-button @click="dialogFormCategoryVisible = false"
+              <el-button @click="dialogFormCategoryVisible1 = false"
                 >取 消</el-button
               >
               <el-button type="primary" @click="save('ruleForm')"
@@ -133,9 +138,9 @@
               > -->
               <el-button
                 type="primary"
-                v-on:click="openCategoryHtml('ruleForm')"
+                v-on:click="openCategoryHtml2('ruleForm')"
                 size="small"
-                >新增分类表</el-button
+                >新增二级分类</el-button
               >
             
           </div>
@@ -177,9 +182,13 @@
 .pagestyle {
   float: right;
 }
+::v-deep .el-table tbody tr:hover > td {
+      background-color: transparent;
+ }
 </style>
 
 <script>
+import $ from 'jquery'
 export default {
   name: "category",
   created() {
@@ -209,6 +218,7 @@ export default {
         sort: "",
       },
       dialogFormCategoryVisible: false,
+      dialogFormCategoryVisible1: false,
       formLabelWidth: "100px",
       total: 0,
       params: {
@@ -227,17 +237,50 @@ export default {
     };
   },
   methods: {
-    openCategoryHtml(formName) {
+    /**
+     * 新增一级
+     */
+    openCategoryHtml1(formName) {
       this.dialogFormCategoryVisible = true;
       this.title = "添加分类表";
+      this.active={};
+      this.level2=[];
+      
       this.$nextTick(function () {
         this.$refs[formName].clearValidate();
       });
       for (let key in this.form) {
         this.form[key] = "";
       }
+      this.form.parent='00000000';
       console.log("清空form==================");
       console.log(this.form);
+      
+    },
+    openCategoryHtml2(formName) {
+      if(Tool.isEmpty(this.active)){
+          this.$notify.error({
+              title: "错误",
+              message: "请先点击一级分类",
+            });
+            return;
+      }
+      this.dialogFormCategoryVisible1 = true;
+      this.title = "添加二级分类表";
+      
+      this.$nextTick(function () {
+        this.$refs[formName].clearValidate();
+      });
+      for (let key in this.form) {
+        this.form[key] = "";
+      }
+      //this.form.parent='00000000';
+
+      this.form.parent = this.active.id;
+
+      console.log("清空form==================");
+      console.log(this.form);
+      
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -253,6 +296,7 @@ export default {
               type: "success",
             });
             this.dialogFormCategoryVisible = false;
+             this.dialogFormCategoryVisible1 = false;
             this.resetForm(formName);
             this.getTableData();
           } else {
@@ -271,6 +315,7 @@ export default {
       console.log(row);
       this.dialogFormCategoryVisible = true;
       this.title = "修改分类表";
+      //this.form = $.extend({},row);
       this.form.id = row.id;
       this.form.parent = row.parent;
       this.form.name = row.name;
@@ -317,30 +362,56 @@ export default {
       this.getTableData();
     },
     async getTableData() {
+      let _this = this;
       try {
         const res = await this.$api.BUSINESS_CATEGORY(this.params);
         console.log("分页查询分类表:");
         console.log(res);
-        this.categorys = res.data;
+        _this.categorys = res.data;
 
-        this.level1 = [];
+        _this.level1 = [];
         //格式化树形
-        for (let i = 0; i < this.categorys.length; i++) {
-          let c = this.categorys[i];
-          if (c.parent === "00000000") {
-            this.level1.push(c);
-            for (let j = 0; j < this.categorys.length; j++) {
-              let child = this.categorys[j];
-              if (child.parent === c.id) {
-                //2级分类
-                if (Tool.isEmpty(c.children)) {
-                  c.children = [];
+        for (let i = 0; i < _this.categorys.length; i++) {
+            let c = _this.categorys[i];
+            if (c.parent === '00000000') {
+              _this.level1.push(c);
+              for (let j = 0; j < _this.categorys.length; j++) {
+                let child = _this.categorys[j];
+                if (child.parent === c.id) {
+                  if (Tool.isEmpty(c.children)) {
+                    c.children = [];
+                  }
+                  c.children.push(child);
                 }
-                c.children.push(child);
               }
             }
           }
-        }
+
+       _this.level2=[];
+       setTimeout(() => {
+         
+         
+         let j = $('tr.el-table__row.active');
+         console.log(j);
+         $('tr.el-table__row.active').click();
+         //document.querySelectorAll('tr.el-table__row.active')[0].click();
+        //  let styles = '';$('tr.el-table__row.active').trigger("click")
+        //  for(let i=0;i<j.length;i++){
+        //     styles = window.getComputedStyle(j[i]).getPropertyValue('background-color');
+        //  }
+        // if(Tool.isEmpty(styles)){
+        //    return; 
+        // }
+        
+        // for(let i=0;i<j.length;i++){
+            
+        // }
+        
+        
+        
+       }, 1000);
+
+
       } catch (error) {
         console.log(error);
       }
@@ -351,23 +422,56 @@ export default {
       this.active = category;
       this.level2 = category.children;
     },
-    cellclick (row, column, cell, event) {
+    rowclick (row, column, event) {
         this.row = row
         this.column = column
+        this.active = row;
+        console.log(row);
+        console.log(event);
+        this.level2 = row.children;
+        setTimeout(() => {
+          let j = $('tr.el-table__row.active');
+          console.log(j[0]);
+          //$(j[0]).trigger("click");
+        }, 1000);
     },
-    tableCellStyle (row, rowIndex, column) {
-      if (this.row && this.columnName) {}
+    tableRowStyle (row, rowIndex) {
+      if (this.row) {}
       if (this.row === row.row) {
-        //console.log("row====================");
-        //console.log(row.row);
-        if(!Tool.isEmpty(this.active) && row.row.id===this.active.id){
-            return 'background-color:#d6e9c6;'
+        let stylejson = {};
+        // console.log("row====================");
+        // console.log(row.row);
+        // console.log(this.active);
+        if(!Tool.isEmpty(this.active) && row.row.id === this.active.id){
+            stylejson.backgroundColor = '#d6e9c6';
+            return stylejson
         }
         return ''
       } else {
         return ''
       }
     },
+    tableRowClass(row, rowIndex){
+      console.log("tableRowClass========================");
+        console.log(row);
+        console.log(this.active);
+        console.log("this.active=======================");
+        if(!Tool.isEmpty(this.active)){
+            if(row.row.id===this.active.id){
+                return "active";
+            }
+            
+        }
+        return "";
+    },
+    tableCellMouseEnter(row, column, cell, event){
+        this.row = row
+        this.column = column
+        this.active = row;
+        console.log(row);
+        console.log(this.active);
+        this.level2 = row.children;
+    }
   },
 };
 </script>

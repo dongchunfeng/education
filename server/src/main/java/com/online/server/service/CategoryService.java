@@ -9,6 +9,7 @@ import com.online.server.util.CopyUtil;
 import com.online.server.util.UuidUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -100,8 +101,24 @@ public class CategoryService {
     /**
      * 删除
      */
+    @Transactional
     public int delete(String id) {
+        deleteChildren(id);
         return categoryMapper.deleteByPrimaryKey(id);
+    }
+
+
+    /**
+     * 删除子分类
+     */
+    public void deleteChildren(String id){
+        Category category = categoryMapper.selectByPrimaryKey(id);
+        if ("00000000".equals(category.getParent())) {
+            // 如果是一级分类，需要删除其下的二级分类
+            CategoryExample example = new CategoryExample();
+            example.createCriteria().andParentEqualTo(category.getId());
+            categoryMapper.deleteByExample(example);
+        }
     }
 
 

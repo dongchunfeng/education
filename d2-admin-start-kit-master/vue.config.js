@@ -5,6 +5,9 @@ const forElementUI = require('webpack-theme-color-replacer/forElementUI')
 const cdnDependencies = require('./dependencies-cdn')
 const { chain, set, each } = require('lodash')
 const proxy = require('http-proxy-middleware');
+
+const webpack =require('webpack')
+
 // 拼接路径
 const resolve = dir => require('path').join(__dirname, dir)
 
@@ -70,6 +73,10 @@ module.exports = {
           threshold: 10240,
           minRatio: 0.8,
           deleteOriginalAssets: false
+        }),
+        new webpack.ProvidePlugin({
+          jQuery:'jquery',
+          $:'jquery'
         })
       ]
     }

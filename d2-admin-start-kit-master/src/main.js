@@ -6,6 +6,7 @@ import App from './App'
 import d2Admin from '@/plugin/d2admin'
 // store
 import store from '@/store/index'
+import $ from 'jquery'
 
 // 菜单和路由设置
 import router from './router'
@@ -16,8 +17,6 @@ import ElementUI from 'element-ui'
 // 核心插件
 Vue.use(d2Admin)
 Vue.use(ElementUI)
-
-
 
 new Vue({
   router,
