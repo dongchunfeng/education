@@ -14,6 +14,8 @@ import { menuHeader, menuAside } from '@/menu'
 import { frameInRoutes } from '@/router/routes'
 import ElementUI from 'element-ui'
 
+
+
 // 核心插件
 Vue.use(d2Admin)
 Vue.use(ElementUI)

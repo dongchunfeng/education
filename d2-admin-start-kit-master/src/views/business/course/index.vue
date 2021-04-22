@@ -249,7 +249,25 @@
       :total="total"
     >
     </el-pagination>
+
+    <!-- 课程内容弹出框 -->
+    <el-dialog
+      title="课程内容"
+      :visible.sync="centerDialogVisible"
+      width="30%"
+      center>
+      <div id="courseContent">
+
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </d2-container>
+
+  
+
 </template>
 
 <style scoped>
@@ -289,10 +307,12 @@
 </style>
 
 <script>
+import E from "wangeditor";
 export default {
   name: "course",
   data() {
     return {
+      centerDialogVisible:false,
       categoryList: [],
       // 默认选中节点
       checkedKeys: [],
@@ -383,6 +403,10 @@ export default {
     };
   },
   mounted() {
+    const E = window.wangEditor
+    const editor = new E('#courseContent')
+    // 或者 const editor = new E( document.getElementById('div1') )
+    editor.create()
     this.getTableData();
     this.getCategoryList();
   },
