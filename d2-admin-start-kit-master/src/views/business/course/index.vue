@@ -2,12 +2,13 @@
   <d2-container>
     <el-dialog :title="title" :visible.sync="dialogFormCourseVisible">
       <el-form :model="form" label-width="80px" :rules="rules" ref="ruleForm">
-        <el-form-item label="分类" prop="">
+        <el-form-item label="分类" prop="categorys">
           <el-tree
             :props="defaultProps"
             :data="categoryList"
             show-checkbox
             node-key="id"
+            ref="tree"
             :default-expand-all="false"
             @check-change="handleCheckChange"
           >
@@ -326,25 +327,25 @@ export default {
         updateAt: "",
       },
       rules: {
-        id: [{ required: true, message: "请选择ID", trigger: "change" }],
-        name: [{ required: true, message: "请选择名称", trigger: "change" }],
+        id: [{ required: true, message: "请选择ID", trigger: "blur" }],
+        name: [{ required: true, message: "请选择名称", trigger: "blur" }],
         summary: [
-          { required: false, message: "请选择概述", trigger: "change" },
+          { required: false, message: "请选择概述", trigger: "blur" },
         ],
-        time: [{ required: false, message: "请选择时长", trigger: "change" }],
+        time: [{ required: false, message: "请选择时长", trigger: "blur" }],
         price: [
-          { required: false, message: "请选择价格(元)", trigger: "change" },
+          { required: true, message: "请选择价格(元)", trigger: "blur" },
         ],
-        image: [{ required: false, message: "请选择封面", trigger: "change" }],
-        level: [{ required: false, message: "请选择级别", trigger: "change" }],
-        charge: [{ required: false, message: "请选择收费", trigger: "change" }],
-        status: [{ required: false, message: "请选择状态", trigger: "change" }],
+        image: [{ required: false, message: "请选择封面", trigger: "blur" }],
+        level: [{ required: false, message: "请选择级别", trigger: "blur" }],
+        charge: [{ required: false, message: "请选择收费", trigger: "blur" }],
+        status: [{ required: false, message: "请选择状态", trigger: "blur" }],
         enroll: [
-          { required: false, message: "请选择报名数", trigger: "change" },
+          { required: false, message: "请选择报名数", trigger: "blur" },
         ],
-        sort: [{ required: false, message: "请选择顺序", trigger: "change" }],
+        sort: [{ required: false, message: "请选择顺序", trigger: "blur" }],
         createAt: [
-          { required: false, message: "请选择创建时间", trigger: "change" },
+          { required: false, message: "请选择创建时间", trigger: "blur" },
         ],
         updateAt: [
           { required: false, message: "请选择修改时间", trigger: "change" },
@@ -398,8 +399,21 @@ export default {
       this.$refs[formName].resetFields();
     },
     save(formName) {
+      
+      let categorys = this.$refs.tree.getCheckedNodes();
+      if(Tool.isEmpty(categorys)){
+          this.$notify.error({
+              title: "错误",
+              message: '请选中一个分类',
+            });
+            return;
+      }
+      console.log("选中的Node================");
+      console.log(categorys);
+      this.form.categorys = categorys;
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
+
           const res = await this.$api.BUSINESS_COURSE_ADD(this.form);
           if (res.code == 0) {
             this.$notify({

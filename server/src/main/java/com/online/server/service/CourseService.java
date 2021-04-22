@@ -14,6 +14,7 @@ import com.online.server.util.UuidUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,6 +41,8 @@ public class CourseService {
 
     @Resource
     private MyCourseMapper myCourseMapper;
+    @Autowired
+    private CourseCategoryService courseCategoryService;
 
     /**
      * 分页查询
@@ -90,17 +93,14 @@ public class CourseService {
                 return ResponseDto.fail(1, "课程表名称重复,请重新输入!");
             }
             int insert = this.insert(course);
-            if (insert > 0) {
-                return ResponseDto.ok(0, "课程表添加成功");
-            }
-            return ResponseDto.fail(1, "课程表添加失败");
         } else {
             int update = this.update(course);
-            if (update > 0) {
-                return ResponseDto.ok(0, "课程表修改成功");
-            }
-            return ResponseDto.fail(1, "课程表修改失败");
         }
+
+        //批量保存课程分类
+        courseCategoryService.saveBatch(courseDto);
+
+        return ResponseDto.ok(0,"课程添加成功!");
     }
 
     /**
