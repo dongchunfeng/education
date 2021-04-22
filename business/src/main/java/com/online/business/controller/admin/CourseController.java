@@ -1,13 +1,13 @@
 package com.online.business.controller.admin;
 
-import com.online.server.dto.CourseDto;
-import com.online.server.dto.PageDto;
-import com.online.server.dto.QueryCourseDto;
-import com.online.server.dto.ResponseDto;
+import com.online.server.dto.*;
+import com.online.server.service.CourseCategoryService;
 import com.online.server.service.CourseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Description
@@ -23,6 +23,8 @@ public class CourseController {
     @Resource
     private CourseService courseService;
     public static final String BUSINESS_NAME = "课程表";
+    @Autowired
+    private CourseCategoryService courseCategoryService;
 
     /**
      * 分页查询
@@ -60,5 +62,13 @@ public class CourseController {
         }
         return ResponseDto.fail(1, "课程表删除失败");
     }
+
+    @RequestMapping(path = "/course/list-category/{courseId}", method = RequestMethod.GET)
+    public ResponseDto listCategory(@PathVariable String courseId) {
+        List<CourseCategoryDto> courseCategoryDtos = courseCategoryService.listByCourse(courseId);
+        return new ResponseDto().ok(0, "查询课程下的分类成功", courseCategoryDtos);
+    }
+
+
 
 }

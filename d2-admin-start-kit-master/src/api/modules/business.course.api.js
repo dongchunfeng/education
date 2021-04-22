@@ -37,6 +37,16 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'get',
       data
     })
+  },
+  BUSINESS_COURSE_LISTCATEGORY (data = {}) {
+    
+
+    // 接口请求
+    return request({
+      url: '/business/admin/course/list-category/'+data,
+      method: 'get',
+      data
+    })
   }
 
 

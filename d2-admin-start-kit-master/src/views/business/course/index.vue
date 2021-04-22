@@ -6,6 +6,7 @@
           <el-tree
             :props="defaultProps"
             :data="categoryList"
+            :default-checked-keys="checkedKeys"
             show-checkbox
             node-key="id"
             ref="tree"
@@ -293,6 +294,8 @@ export default {
   data() {
     return {
       categoryList: [],
+      // 默认选中节点
+      checkedKeys: [],
       defaultProps: {
         label: "name",
       },
@@ -365,6 +368,7 @@ export default {
         sort: "",
         createAt: "",
         updateAt: "",
+        categorys:[],
       },
       dialogFormCourseVisible: false,
       formLabelWidth: "100px",
@@ -392,6 +396,11 @@ export default {
       for (let key in this.form) {
         this.form[key] = "";
       }
+      this.$nextTick(() => {
+            this.$refs.tree.setCheckedKeys([]);
+
+      });
+      //
       console.log("清空form==================");
       console.log(this.form);
     },
@@ -440,6 +449,8 @@ export default {
       console.log(row);
       this.dialogFormCourseVisible = true;
       this.title = "修改课程表";
+      //this.form = $.extends({},row);
+      
       this.form.id = row.id;
       this.form.name = row.name;
       this.form.summary = row.summary;
@@ -455,6 +466,28 @@ export default {
       this.form.updateAt = row.updateAt;
       console.log("修改课程表 form: =======================");
       console.log(this.form);
+
+
+      this.listCategory(row.id);
+    },
+    async listCategory(courseId){
+        const res = await this.$api.BUSINESS_COURSE_LISTCATEGORY(courseId);
+        console.log("查找课程下所有分类的结果=====");
+        console.log(res);
+        let categorys = res.data;
+        this.checkedKeys=[];
+        this.$refs.tree.setCheckedKeys([]);
+        if(Tool.isEmpty(categorys)){
+            return;
+        }
+        
+        for(let i=0;i<categorys.length;i++){
+          let node = categorys[i].categoryId;
+          this.checkedKeys.push(node);
+        }
+        //this.checkedKeys=["00000108"];
+        console.log(this.checkedKeys);
+
     },
     del(id) {
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
@@ -518,9 +551,11 @@ export default {
     async getCategoryList() {
       const res = await this.$api.BUSINESS_CATEGORY();
       console.log("查询分类列表");
-      console.log(res);
+      
 
       this.categoryList = this.arraytotree(res.data);
+      console.log(this.categoryList);
+      
     },
     //数组转化为树
     arraytotree(arr) {

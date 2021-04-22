@@ -11,6 +11,7 @@ import com.online.server.util.UuidUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -104,6 +105,7 @@ public class CourseCategoryService {
         return courseCategoryMapper.deleteByPrimaryKey(id);
     }
 
+    @Transactional
     public void saveBatch(CourseDto courseDto){
         CourseCategoryExample example = new CourseCategoryExample();
         example.createCriteria().andCourseIdEqualTo(courseDto.getId());
@@ -119,6 +121,12 @@ public class CourseCategoryService {
 
     }
 
+    public List<CourseCategoryDto> listByCourse(String courseId){
+        CourseCategoryExample example = new CourseCategoryExample();
+        example.createCriteria().andCourseIdEqualTo(courseId);
+        List<CourseCategory> courseCategories = courseCategoryMapper.selectByExample(example);
+        return CopyUtil.copyList(courseCategories,CourseCategoryDto.class);
+    }
 
 
 }
