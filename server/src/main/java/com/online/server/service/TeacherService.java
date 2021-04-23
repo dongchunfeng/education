@@ -63,6 +63,12 @@ public class TeacherService {
         return pageDto;
     }
 
+    public List<TeacherDto> all(){
+        TeacherExample teacherExample = new TeacherExample();
+        List<Teacher> teachers = teacherMapper.selectByExample(teacherExample);
+        return CopyUtil.copyList(teachers,TeacherDto.class);
+    }
+
     /**
      * 根据name查询
      * @param name

@@ -67,6 +67,16 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'post',
       data
     })
+  },
+  BUSINESS_COURSE_TEACHERLIST (data = {}) {
+    
+
+    // 接口请求
+    return request({
+      url: '/business/admin/teacher/getTeacherList/',
+      method: 'get',
+      data
+    })
   }
 
 

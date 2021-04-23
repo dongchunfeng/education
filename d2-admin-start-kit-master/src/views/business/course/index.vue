@@ -18,6 +18,17 @@
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="讲师" prop="teacherId">
+          <el-select v-model="form.teacherId" placeholder="请选择">
+            <el-option
+              v-for="item in teachers"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="概述" prop="summary">
           <el-input v-model="form.summary" autocomplete="off"></el-input>
         </el-form-item>
@@ -30,6 +41,7 @@
         <el-form-item label="封面" prop="image">
           <el-input v-model="form.image" autocomplete="off"></el-input>
         </el-form-item>
+        
         <el-form-item label="级别" prop="level">
           <el-select v-model="form.level" placeholder="请选择">
             <el-option
@@ -120,6 +132,10 @@
             <span style="color: #409eff; font-size: 25px; font-weight: 200">{{
               o.name
             }}</span>
+            <div v-for="teacher in teachers.filter(t=>{return t.id===o.teacherId})" :key="teacher.id">
+              <el-avatar :size="50" :src="teacher.image"></el-avatar>
+              <span>{{teacher.name}}</span>
+            </div>
             <p style="color: #409eff">{{ o.price }} 元</p>
             <div class="bottom clearfix">
               <time class="time">{{ o.summary }}</time>
@@ -351,6 +367,7 @@ export default {
       ruleForm: {
         id: "",
         name: "",
+        teacherId:"",
         summary: "",
         time: "",
         price: "",
@@ -391,6 +408,7 @@ export default {
       form: {
         id: "",
         name: "",
+        teacherId:"",
         summary: "",
         time: "",
         price: "",
@@ -418,12 +436,14 @@ export default {
       courseContentId:'',
       saveContentInterval:'',
       saveContentLabel:'',
+      teachers:[],
     };
   },
   mounted() {
     
     this.getTableData();
     this.getCategoryList();
+    this.getTeacherList();
   },
   methods: {
     showCourseContentClick(){ //这里是解决dialog弹出层初始化失败的问题
@@ -547,6 +567,7 @@ export default {
       //this.form = $.extends({},row);
       
       this.form.id = row.id;
+      this.form.teacherId = row.teacherId;
       this.form.name = row.name;
       this.form.summary = row.summary;
       this.form.time = row.time;
@@ -650,6 +671,14 @@ export default {
 
       this.categoryList = this.arraytotree(res.data);
       console.log(this.categoryList);
+      
+    },
+    async getTeacherList() {
+      const res = await this.$api.BUSINESS_COURSE_TEACHERLIST();
+      console.log("查询讲师列表");
+
+      this.teachers = res.data;
+      console.log(res);
       
     },
     //数组转化为树

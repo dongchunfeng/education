@@ -1,13 +1,11 @@
 package com.online.business.controller.admin;
 
-import com.online.server.dto.PageDto;
-import com.online.server.dto.QueryTeacherDto;
-import com.online.server.dto.ResponseDto;
-import com.online.server.dto.TeacherDto;
+import com.online.server.dto.*;
 import com.online.server.service.TeacherService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Description
@@ -23,6 +21,16 @@ public class TeacherController {
     @Resource
     private TeacherService teacherService;
     public static final String BUSINESS_NAME = "讲师";
+
+    /**
+     * 查询所有讲师
+     * @return
+     */
+    @RequestMapping(path = "/teacher/getTeacherList", method = RequestMethod.GET)
+    public ResponseDto list() {
+        List<TeacherDto> all = teacherService.all();
+        return new ResponseDto().ok(0, "讲师列表查询成功", all);
+    }
 
     /**
      * 分页查询
