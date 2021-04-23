@@ -114,7 +114,17 @@ create table `course_content`(
     primary key (`id`)
 ) engine=innodb default charset=utf8mb4 comment '课程内容';
 
-
+drop table if exists `teacher`;
+create table `teacher`(
+    `id` char(8) not null default '' comment 'id',
+    `name` varchar(50) not null comment '姓名',
+    `nickname` varchar(100) comment '昵称',
+    `image` varchar(100) comment '头像',
+    `position` varchar(100) comment '职位',
+    `motto` varchar(100) comment '座右铭',
+    `intro` varchar(500) comment '简介',
+    primary key (`id`)
+) engine=innodb default charset=utf8mb4 comment '讲师';
 
 
 

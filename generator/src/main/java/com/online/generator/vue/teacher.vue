@@ -128,13 +128,13 @@ export default {
         },
         rules: {
             "id": [
-                { required: true, message: '请选择id', trigger: 'change' }
+                { required: false, message: '请选择id', trigger: 'change' }
             ],
             "name": [
-                { required: true, message: '请选择姓名', trigger: 'change' }
+                { required: false, message: '请选择姓名', trigger: 'change' }
             ],
             "nickname": [
-                { required: true, message: '请选择昵称', trigger: 'change' }
+                { required: false, message: '请选择昵称', trigger: 'change' }
             ],
             "image": [
                 { required: false, message: '请选择头像', trigger: 'change' }

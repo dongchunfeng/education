@@ -53,7 +53,7 @@ public class ServerGenerator {
         //搜索的参数
         String Title = "name";
         //api名字
-        String SECTION = "CATEGORY";
+        String SECTION = "TEACHER";
         //val
         String val = "${val}";
 
