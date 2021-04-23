@@ -9,7 +9,17 @@
           <el-input v-model="form.nickname" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="头像" prop="image">
-          <el-input v-model="form.image" autocomplete="off"></el-input>
+          <!-- <el-input v-model="form.image" autocomplete="off"></el-input> -->
+          <el-upload
+            class="avatar-uploader"
+            action="api//file/admin/upload"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
         </el-form-item>
         <el-form-item label="职位" prop="position">
           <el-input v-model="form.position" autocomplete="off"></el-input>
@@ -49,22 +59,25 @@
       </el-form>
     </template>
     <el-row>
-      <el-col :span="6" v-for="teacher in tableData"
-          :key="teacher.id">
-        <el-card
-          :body-style="{ padding: '5px' }"
-          
-        >
+      <el-col :span="6" v-for="teacher in tableData" :key="teacher.id">
+        <el-card :body-style="{ padding: '5px' }">
           <img :src="teacher.image" class="image" />
           <div class="d2-text-center">
             <span class="" style="">{{ teacher.position }}</span>
           </div>
-          
+
           <div style="padding: 14px" class="d2-text-center">
             <span>{{ teacher.name }}</span>
             <div class="bottom clearfix">
-              <el-button @click="handleClickEdit(teacher)" type="text" size="small">编辑</el-button>
-              <el-button type="text" size="small" @click="del(teacher.id)">删除</el-button>
+              <el-button
+                @click="handleClickEdit(teacher)"
+                type="text"
+                size="small"
+                >编辑</el-button
+              >
+              <el-button type="text" size="small" @click="del(teacher.id)"
+                >删除</el-button
+              >
             </div>
           </div>
         </el-card>
@@ -172,6 +185,29 @@
 .clearfix:after {
   clear: both;
 }
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 </style>
 
 <script>
@@ -227,6 +263,7 @@ export default {
       },
       multipleSelection: [],
       tableData: [],
+      imageUrl:"",
     };
   },
   methods: {
@@ -239,6 +276,7 @@ export default {
       for (let key in this.form) {
         this.form[key] = "";
       }
+      this.imageUrl="";
       console.log("清空form==================");
       console.log(this.form);
     },
@@ -281,6 +319,7 @@ export default {
       this.form.position = row.position;
       this.form.motto = row.motto;
       this.form.intro = row.intro;
+      this.imageUrl = row.image;
       console.log("修改讲师 form: =======================");
       console.log(this.form);
     },
@@ -332,6 +371,23 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    handleAvatarSuccess(res, file) {
+      console.log(res);
+      this.imageUrl = res.data;
+      this.form.image = res.data;
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     },
   },
 };
