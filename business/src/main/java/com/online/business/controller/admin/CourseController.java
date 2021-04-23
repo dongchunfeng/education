@@ -3,6 +3,7 @@ package com.online.business.controller.admin;
 import com.online.server.dto.*;
 import com.online.server.service.CourseCategoryService;
 import com.online.server.service.CourseService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,6 @@ public class CourseController {
     public static final String BUSINESS_NAME = "课程表";
     @Autowired
     private CourseCategoryService courseCategoryService;
-
     /**
      * 分页查询
      * @param page
@@ -69,6 +69,24 @@ public class CourseController {
         return new ResponseDto().ok(0, "查询课程下的分类成功", courseCategoryDtos);
     }
 
+    @RequestMapping(path = "/course/findCourseContent/{courseId}", method = RequestMethod.GET)
+    public ResponseDto findCourseContent(@PathVariable String courseId) {
+        CourseContentDto content = courseService.findContent(courseId);
+        ResponseDto responseDto = new ResponseDto().ok(0, "查询课程的内容成功", content);
+        if(responseDto.getData()==null){
+            return ResponseDto.fail(0,"课程内容为空!");
+        }
+        return new ResponseDto().ok(0, "查询课程的内容成功", content);
+    }
+
+    @RequestMapping(path = "/course/saveContent", method = RequestMethod.POST)
+    public ResponseDto findCourseContent(@RequestBody CourseContentDto courseContentDto) {
+        if(StringUtils.isBlank(courseContentDto.getId())||StringUtils.isBlank(courseContentDto.getContent())){
+            return ResponseDto.fail(0,"数据为空,请重试!");
+        }
+        int i = courseService.saveContent(courseContentDto);
+        return ResponseDto.ok(0, "添加课程的内容成功");
+    }
 
 
 }

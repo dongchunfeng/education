@@ -3,10 +3,13 @@ package com.online.server.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.online.server.domain.Course;
+import com.online.server.domain.CourseContent;
 import com.online.server.domain.CourseExample;
+import com.online.server.dto.CourseContentDto;
 import com.online.server.dto.CourseDto;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.ResponseDto;
+import com.online.server.mapper.CourseContentMapper;
 import com.online.server.mapper.CourseMapper;
 import com.online.server.mapper.my.MyCourseMapper;
 import com.online.server.util.CopyUtil;
@@ -23,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Date;
-
 
 
 /**
@@ -44,9 +46,12 @@ public class CourseService {
     private MyCourseMapper myCourseMapper;
     @Autowired
     private CourseCategoryService courseCategoryService;
+    @Resource
+    private CourseContentMapper courseContentMapper;
 
     /**
      * 分页查询
+     *
      * @param page
      * @param size
      * @param name
@@ -77,21 +82,22 @@ public class CourseService {
 
     /**
      * 根据name查询
+     *
      * @param name
      * @return
      */
-    public boolean findCourseByName(String name){
+    public boolean findCourseByName(String name) {
         CourseExample courseExample = new CourseExample();
         courseExample.createCriteria().andNameEqualTo(name);
         List<Course> courses = courseMapper.selectByExample(courseExample);
-        return courses.size() >0;
+        return courses.size() > 0;
     }
 
     @Transactional
     public ResponseDto save(CourseDto courseDto) {
         Course course = CopyUtil.copy(courseDto, Course.class);
         if (StringUtils.isBlank(courseDto.getId())) {
-            if(this.findCourseByName(courseDto.getName())){
+            if (this.findCourseByName(courseDto.getName())) {
                 return ResponseDto.fail(1, "课程表名称重复,请重新输入!");
             }
             int insert = this.insert(course);
@@ -100,13 +106,14 @@ public class CourseService {
         }
 
         //批量保存课程分类
-        courseCategoryService.saveBatch(courseDto);
+        courseCategoryService.saveBatch(course.getId(),courseDto.getCategorys());
 
-        return ResponseDto.ok(0,"课程添加成功!");
+        return ResponseDto.ok(0, "课程添加成功!");
     }
 
     /**
      * 保存
+     *
      * @param course
      * @return
      */
@@ -120,6 +127,7 @@ public class CourseService {
 
     /**
      * 修改
+     *
      * @param course
      * @return
      */
@@ -135,10 +143,34 @@ public class CourseService {
         return courseMapper.deleteByPrimaryKey(id);
     }
 
-    public void updateTime(String courseId){
-        log.info("更新总时长: {}"+courseId);
+    public void updateTime(String courseId) {
+        log.info("更新总时长: {}" + courseId);
         myCourseMapper.updateTime(courseId);
     }
+
+    /**
+     * 通过课程Id查找课程内容
+     * @param id
+     * @return
+     */
+    public CourseContentDto findContent(String id) {
+        CourseContent courseContent = courseContentMapper.selectByPrimaryKey(id);
+        if (courseContent == null) {
+            return null;
+        }
+        return CopyUtil.copy(courseContent, CourseContentDto.class);
+    }
+
+
+    public int saveContent(CourseContentDto courseContentDto){
+        CourseContent content = CopyUtil.copy(courseContentDto, CourseContent.class);
+        int i = courseContentMapper.updateByPrimaryKeyWithBLOBs(content);
+        if(i==0){
+            i = courseContentMapper.insert(content);
+        }
+        return i;
+    }
+
 
 
 }

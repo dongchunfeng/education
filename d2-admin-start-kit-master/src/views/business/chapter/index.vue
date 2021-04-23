@@ -93,7 +93,7 @@
 export default {
     name: 'chapter',
     mounted(){
-        let course = SessionStorage.get("course") || {};
+        let course = SessionStorage.get(SESSION_KEY_COURSE) || {};
         if(Tool.isEmpty(course)){
             this.$router.push("/course");
         }
@@ -137,7 +137,7 @@ export default {
     },
     methods: {
       toSections(chapter){
-          SessionStorage.set("chapter",chapter);
+          SessionStorage.set(SESSION_KEY_CHAPTER,chapter);
           this.$router.push("/section");
       },
       openChapterHtml(formName){

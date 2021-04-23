@@ -47,6 +47,26 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'get',
       data
     })
+  },
+  BUSINESS_COURSE_FINDCOURSECONTENT (data = {}) {
+    
+
+    // 接口请求
+    return request({
+      url: '/business/admin/course/findCourseContent/'+data,
+      method: 'get',
+      data
+    })
+  },
+  BUSINESS_COURSE_SAVECONTENT (data = {}) {
+    
+
+    // 接口请求
+    return request({
+      url: '/business/admin/course/saveContent/',
+      method: 'post',
+      data
+    })
   }
 
 

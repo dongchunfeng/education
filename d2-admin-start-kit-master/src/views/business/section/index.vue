@@ -144,8 +144,8 @@
 export default {
     name: 'sections',
     mounted(){
-      let chapter = SessionStorage.get("chapter")||{};
-      let course = SessionStorage.get("course")||{};
+      let chapter = SessionStorage.get(SESSION_KEY_CHAPTER)||{};
+      let course = SessionStorage.get(SESSION_KEY_COURSE)||{};
       if (Tool.isEmpty(course) || Tool.isEmpty(chapter)) {
         _this.$router.push("/course");
       }

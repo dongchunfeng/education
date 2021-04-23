@@ -140,18 +140,25 @@
                 <el-button
                   @click="toChapter(o)"
                   type="success"
-                  size="small"
+                  size="mini"
                   plain
                   >大章</el-button
                 >
                 <el-button
+                  @click="editCourseContent(o)"
+                  type="success"
+                  size="mini"
+                  plain
+                  >内容</el-button
+                >
+                <el-button
                   @click="handleClickEdit(o)"
                   type="success"
-                  size="small"
+                  size="mini"
                   plain
                   >编辑</el-button
                 >
-                <el-button type="danger" size="small" @click="del(o.id)" plain
+                <el-button type="danger" size="mini" @click="del(o.id)" plain
                   >删除</el-button
                 >
               </span>
@@ -252,16 +259,23 @@
 
     <!-- 课程内容弹出框 -->
     <el-dialog
+      @opened="showCourseContentClick()"
+      @closed="hideClick()"
+      destroy-on-close
       title="课程内容"
       :visible.sync="centerDialogVisible"
-      width="30%"
+      :close-on-click-modal="false"
+      width="60%"
       center>
-      <div id="courseContent">
-
-      </div>
+        <div>
+          {{saveContentLabel}}
+        </div>
+        <div id="wangeditor">
+            <div ref="editorElem" style="text-align:left;"></div>
+        </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="saveContent">确 定</el-button>
       </span>
     </el-dialog>
   </d2-container>
@@ -307,7 +321,7 @@
 </style>
 
 <script>
-import E from "wangeditor";
+import E from 'wangeditor'
 export default {
   name: "course",
   data() {
@@ -400,17 +414,74 @@ export default {
       },
       multipleSelection: [],
       tableData: [],
+      editor:'',
+      courseContentId:'',
+      saveContentInterval:'',
+      saveContentLabel:'',
     };
   },
   mounted() {
-    const E = window.wangEditor
-    const editor = new E('#courseContent')
-    // 或者 const editor = new E( document.getElementById('div1') )
-    editor.create()
+    
     this.getTableData();
     this.getCategoryList();
   },
   methods: {
+    showCourseContentClick(){ //这里是解决dialog弹出层初始化失败的问题
+      this.editor = new E(this.$refs.editorElem)
+      this.editor.config.zIndex = 10
+      this.editor.config.onchange = html => {
+        console.log('html', html)
+      }
+      this.editor.create()
+    },
+    hideClick(){////这里是解决富文本嵌套问题
+      this.$refs.editorElem.innerHTML = ''
+      this.editor = null
+      clearInterval(this.saveContentInterval);
+      console.log(this.editor);
+    },
+    async editCourseContent(course){
+      let id = course.id;
+      this.courseContentId = id;
+      this.centerDialogVisible = true;
+
+      //清空编辑器内容
+      this.saveContentLabel = "";
+      const res = await this.$api.BUSINESS_COURSE_FINDCOURSECONTENT(id);
+      let resp = res;
+      console.log(res);
+      //回显课程内容  由于this.editor 在打开时未完成渲染 所以定时500毫秒后显示
+      setTimeout(() => {
+        if(res.success){
+            this.editor.txt.html(res.data.content);
+
+            //定时保存
+            let saveContentInterval = setInterval(()=>{
+              this.saveContent();
+            },5000); 
+            this.saveContentInterval = saveContentInterval;
+              }
+      }, 500);
+
+      
+
+
+    },
+    async saveContent(){
+      let _this = this;
+      let content = this.editor.txt.html();
+      console.log("获取到的content==========");
+      console.log(content);
+
+      const res = await this.$api.BUSINESS_COURSE_SAVECONTENT({
+        id:this.courseContentId,
+        content:content
+      });
+      if(res.success){
+        let now = Tool.dateFormat("yyyy-MM-dd hh:mm:ss");
+        this.saveContentLabel = "最后保存时间" + now;
+      }
+    },
     openCourseHtml(formName) {
       this.dialogFormCourseVisible = true;
       this.title = "添加课程表";
@@ -563,7 +634,7 @@ export default {
       }
     },
     toChapter(course) {
-      SessionStorage.set("course", course);
+      SessionStorage.set(SESSION_KEY_COURSE, course);
       this.$router.push("/chapter");
     },
     handleCheckChange(data, checked, indeterminate) {

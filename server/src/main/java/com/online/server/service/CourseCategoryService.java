@@ -106,15 +106,15 @@ public class CourseCategoryService {
     }
 
     @Transactional
-    public void saveBatch(CourseDto courseDto){
+    public void saveBatch(String courseId,List<CategoryDto> dtoList){
         CourseCategoryExample example = new CourseCategoryExample();
-        example.createCriteria().andCourseIdEqualTo(courseDto.getId());
+        example.createCriteria().andCourseIdEqualTo(courseId);
         courseCategoryMapper.deleteByExample(example);
-        for (int i = 0; i < courseDto.getCategorys().size(); i++) {
-            CategoryDto categoryDto = courseDto.getCategorys().get(i);
+        for (int i = 0, l = dtoList.size(); i < l; i++) {
+            CategoryDto categoryDto = dtoList.get(i);
             CourseCategory courseCategory = new CourseCategory();
             courseCategory.setId(UuidUtil.getShortUuid());
-            courseCategory.setCourseId(courseDto.getId());
+            courseCategory.setCourseId(courseId);
             courseCategory.setCategoryId(categoryDto.getId());
             insert(courseCategory);
         }
