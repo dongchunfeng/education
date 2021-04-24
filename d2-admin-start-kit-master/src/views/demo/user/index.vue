@@ -3,7 +3,7 @@
     <el-dialog :title="title" :visible.sync="dialogFormUserVisible">
   <el-form :model="form" label-width="80px" :rules="rules" ref="ruleForm">
               <el-form-item label="登录名" prop="loginName">
-              <el-input v-model="form.loginName" autocomplete="off"></el-input>
+              <el-input v-model="form.loginName" :disabled="form.id!=''" autocomplete="off"></el-input>
               </el-form-item>
               <el-form-item label="昵称" prop="name">
               <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -101,16 +101,16 @@ export default {
         },
         rules: {
             "id": [
-                { required: false, message: '请选择id', trigger: 'change' }
+                { required: true, message: '请选择id', trigger: 'change' }
             ],
             "loginName": [
-                { required: false, message: '请选择登录名', trigger: 'change' }
+                { required: true, message: '请选择登录名', trigger: 'change' }
             ],
             "name": [
-                { required: false, message: '请选择昵称', trigger: 'change' }
+                { required: true, message: '请选择昵称', trigger: 'change' }
             ],
             "password": [
-                { required: false, message: '请选择密码', trigger: 'change' }
+                { required: true, message: '请选择密码', trigger: 'change' }
             ],
         },
         form:{
@@ -148,9 +148,10 @@ export default {
         this.$refs[formName].resetFields();
       },
       save(formName){
-
+        
         this.$refs[formName].validate(async (valid) => {
           if (valid) {
+            this.form.password = hex_md5(this.form.password+KEY);
             const res = await this.$api.BUSINESS_USER_ADD(this.form);
           if(res.code==0){
             this.$notify({

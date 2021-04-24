@@ -5,6 +5,7 @@ import com.online.server.dto.QueryUserDto;
 import com.online.server.dto.ResponseDto;
 import com.online.server.dto.UserDto;
 import com.online.server.service.UserService;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -44,6 +45,7 @@ public class UserController {
      */
     @RequestMapping(path = "/user/add", method = RequestMethod.POST)
     public ResponseDto save(@RequestBody UserDto userDto) {
+        userDto.setPassword(DigestUtils.md5DigestAsHex(userDto.getPassword().getBytes()));
         return userService.save(userDto);
     }
 

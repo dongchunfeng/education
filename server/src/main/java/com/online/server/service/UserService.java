@@ -75,9 +75,24 @@ public class UserService {
         return users.size() >0;
     }
 
+    /**
+     * 根据login_name查询
+     * @param loginName
+     * @return
+     */
+    public boolean findUserByLoginName(String loginName){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andLoginNameEqualTo(loginName);
+        List<User> users = userMapper.selectByExample(userExample);
+        return users.size() >0;
+    }
+
     public ResponseDto save(UserDto userDto) {
         User user = CopyUtil.copy(userDto, User.class);
         if (StringUtils.isBlank(userDto.getId())) {
+            if(this.findUserByLoginName(userDto.getLoginName())){
+                return ResponseDto.fail(1, "登录名称重复,请重新输入!");
+            }
             if(this.findUserByName(userDto.getName())){
                 return ResponseDto.fail(1, "用户名称重复,请重新输入!");
             }
