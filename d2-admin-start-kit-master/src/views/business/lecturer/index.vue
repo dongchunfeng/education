@@ -10,7 +10,7 @@
         </el-form-item>
         <el-form-item label="头像" prop="image">
           <!-- <el-input v-model="form.image" autocomplete="off"></el-input> -->
-          <el-upload
+          <!-- <el-upload
             class="avatar-uploader"
             action="api//file/admin/upload"
             :show-file-list="false"
@@ -19,7 +19,9 @@
           >
             <img v-if="imageUrl" :src="imageUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+          </el-upload> -->
+          <file :after-upload="afterUpload" :suffixs="'image/jpeg'"></file>
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
         </el-form-item>
         <el-form-item label="职位" prop="position">
           <el-input v-model="form.position" autocomplete="off"></el-input>
@@ -61,7 +63,8 @@
     <el-row>
       <el-col :span="6" v-for="teacher in tableData" :key="teacher.id">
         <el-card :body-style="{ padding: '5px' }">
-          <img :src="teacher.image" class="image" />
+          <img v-show="!teacher.image" src="./../../../../public/image/avator/avator1.jpg" class="image" />
+          <img v-show="teacher.image" :src="teacher.image" class="image" />
           <div class="d2-text-center">
             <span class="" style="">{{ teacher.position }}</span>
           </div>
@@ -211,7 +214,9 @@
 </style>
 
 <script>
+import File from "../../../components/file/index.vue";
 export default {
+  components:{File},
   name: "teacher",
   created() {
     this.getTableData();
@@ -315,7 +320,7 @@ export default {
       this.form.id = row.id;
       this.form.name = row.name;
       this.form.nickname = row.nickname;
-      this.form.image = row.image;
+      //this.form.image = row.image;
       this.form.position = row.position;
       this.form.motto = row.motto;
       this.form.intro = row.intro;
@@ -372,23 +377,28 @@ export default {
         console.log(error);
       }
     },
-    handleAvatarSuccess(res, file) {
-      console.log(res);
-      this.imageUrl = res.data;
-      this.form.image = res.data;
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+    afterUpload(resp){
+      console.log(resp);
+      this.imageUrl = resp.data;
+      this.form.image = resp.data;
+    }
+    // handleAvatarSuccess(res, file) {
+    //   console.log(res);
+    //   this.imageUrl = res.data;
+    //   this.form.image = res.data;
+    // },
+    // beforeAvatarUpload(file) {
+    //   const isJPG = file.type === "image/jpeg";
+    //   const isLt2M = file.size / 1024 / 1024 < 2;
 
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
+    //   if (!isJPG) {
+    //     this.$message.error("上传头像图片只能是 JPG 格式!");
+    //   }
+    //   if (!isLt2M) {
+    //     this.$message.error("上传头像图片大小不能超过 2MB!");
+    //   }
+    //   return isJPG && isLt2M;
+    // },
   },
 };
 </script>

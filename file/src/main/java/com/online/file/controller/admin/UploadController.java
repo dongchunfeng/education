@@ -3,6 +3,7 @@ package com.online.file.controller.admin;
 import com.online.server.dto.ResponseDto;
 import com.online.server.util.UuidUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,11 @@ import java.io.IOException;
 @Slf4j
 public class UploadController {
 
+    @Value("${file.path}")
+    private String filePath;
+
+    @Value("${file.domain}")
+    private String fileDomain;
 
     @PostMapping("/upload")
     public ResponseDto upload(@RequestParam MultipartFile file) throws IOException {
@@ -33,10 +39,10 @@ public class UploadController {
 
         String fileName = file.getOriginalFilename();
         String key = UuidUtil.getShortUuid();
-        String fullPath = "D:\\projectdev\\education\\course\\teacher\\" + key + "-" + fileName;
+        String fullPath = filePath + "teacher/" + key + "-" + fileName;
         File dest = new File(fullPath);
         file.transferTo(dest);
-        return new ResponseDto().ok(0, "文件上传成功","http://127.0.0.1:9000/file/f/teacher/"+key + "-" + fileName);
+        return new ResponseDto().ok(0, "文件上传成功", fileDomain + "/f/teacher/" + key + "-" + fileName);
     }
 
 }

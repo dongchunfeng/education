@@ -21,7 +21,7 @@ export const menuHeader = supplementPath([
     title: '系统管理',
     icon: 'folder-o',
     children: [
-      { path: '/page1', title: '用户管理' },
+      { path: '/user', title: '用户管理' },
       { path: '/page2', title: '资源管理' },
       { path: '/page3', title: '角色管理' }
     ]
@@ -45,7 +45,7 @@ export const menuAside = supplementPath([
     title: '系统管理',
     icon: 'folder-o',
     children: [
-      { path: '/page1', title: '用户管理' },
+      { path: '/user', title: '用户管理' },
       { path: '/page2', title: '资源管理' },
       { path: '/page3', title: '角色管理' }
     ]

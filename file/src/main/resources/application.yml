@@ -9,3 +9,7 @@ eureka:
   client:
     service-url:
       dafaultZone: http://localhost:8761/eureka/
+
+file:
+  path: D:/projectdev/education/course/
+  domain: http://127.0.0.1:9000/file/
