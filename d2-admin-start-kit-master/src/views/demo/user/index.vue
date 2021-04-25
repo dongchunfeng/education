@@ -1,5 +1,16 @@
 <template>
   <d2-container>
+    <el-dialog :title="title" :visible.sync="dialogFormEditPassUserVisible">
+  <el-form :model="form" label-width="80px" :rules="rules" ref="ruleForm">
+              <el-form-item label="密码" prop="password">
+                  <el-input show-password v-model="form.password" autocomplete="off"></el-input>
+              </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormEditPassUserVisible = false">取 消</el-button>
+    <el-button type="primary" @click="savePassword('ruleForm')">确 定</el-button>
+  </div>
+</el-dialog>
     <el-dialog :title="title" :visible.sync="dialogFormUserVisible">
   <el-form :model="form" label-width="80px" :rules="rules" ref="ruleForm">
               <el-form-item label="登录名" prop="loginName">
@@ -8,8 +19,8 @@
               <el-form-item label="昵称" prop="name">
               <el-input v-model="form.name" autocomplete="off"></el-input>
               </el-form-item>
-              <el-form-item label="密码" prop="password">
-              <el-input v-model="form.password" autocomplete="off"></el-input>
+              <el-form-item v-show="!form.id" label="密码" prop="password">
+              <el-input show-password v-model="form.password" autocomplete="off"></el-input>
               </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
@@ -59,6 +70,7 @@
       label="操作"
       width="100">
       <template slot-scope="scope">
+        <el-button @click="editPassword(scope.row)" type="text" size="small">修改密码</el-button>
         <el-button @click="handleClickEdit(scope.row)" type="text" size="small">编辑</el-button>
         <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
       </template>
@@ -84,6 +96,7 @@
 </style>
 
 <script>
+import $ from 'jquery'
 export default {
     name: 'user',
     created(){
@@ -120,6 +133,7 @@ export default {
             "password":'',
         },
         dialogFormUserVisible:false,
+        dialogFormEditPassUserVisible:false,
         formLabelWidth: '100px',
         total: 0,
         params: {
@@ -185,6 +199,11 @@ export default {
         console.log("修改用户 form: =======================");
         console.log(this.form);
       },
+      editPassword(user){  
+        this.form = $.extend({},user);
+        this.form.password=null;
+        this.dialogFormEditPassUserVisible = true;
+      },
       del(id){
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -234,6 +253,32 @@ export default {
         } catch (error) {
           console.log(error)
         }
+      },
+      savePassword(formName){
+          this.$refs[formName].validate(async (valid) => {
+          if (valid) {
+            this.form.password = hex_md5(this.form.password+KEY);
+            const res = await this.$api.SYSTEM_USER_SAVEPASSWORD(this.form);
+          if(res.code==0){
+            this.$notify({
+            title: '成功',
+            message: res.msg,
+            type: 'success'
+          });
+          this.dialogFormEditPassUserVisible = false;
+          this.resetForm(formName);
+          this.getTableData();
+          }else{
+            this.$notify.error({
+                title: '错误',
+                message: res.msg
+              });
+          }
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       }
     }
   }

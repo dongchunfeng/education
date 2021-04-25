@@ -7,7 +7,7 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
    * @description ${tableNameCn}
    * @param {Object} data 携带的信息
    */
-  BUSINESS_${DOMAIN} (data = {}) {
+  ${module}_${DOMAIN} (data = {}) {
     
     let query = querystring.stringify(data);
 
@@ -18,7 +18,7 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       data
     })
   },
-  BUSINESS_${DOMAIN}_ADD (data = {}) {
+  ${module}_${DOMAIN}_ADD (data = {}) {
     
 
     // 接口请求
@@ -28,7 +28,7 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       data
     })
   },
-  BUSINESS_${DOMAIN}_DEL (data = {}) {
+  ${module}_${DOMAIN}_DEL (data = {}) {
     
 
     // 接口请求

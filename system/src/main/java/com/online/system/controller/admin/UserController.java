@@ -1,9 +1,6 @@
 package com.online.system.controller.admin;
 
-import com.online.server.dto.PageDto;
-import com.online.server.dto.QueryUserDto;
-import com.online.server.dto.ResponseDto;
-import com.online.server.dto.UserDto;
+import com.online.server.dto.*;
 import com.online.server.service.UserService;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -62,5 +59,28 @@ public class UserController {
         }
         return ResponseDto.fail(1, "用户删除失败");
     }
+
+    /**
+     * 重置密码
+     * @param userDto
+     * @return
+     */
+    @RequestMapping(path = "/user/save-password", method = RequestMethod.POST)
+    public ResponseDto savePassword(@RequestBody UserDto userDto) {
+        userDto.setPassword(DigestUtils.md5DigestAsHex(userDto.getPassword().getBytes()));
+        int i = userService.savePassword(userDto);
+        if(i>0){
+            return  new ResponseDto().ok(0,"保存密码成功!",userDto);
+        }
+        return  ResponseDto.fail(1,"保存密码失败!");
+    }
+
+    @RequestMapping(path = "/user/login", method = RequestMethod.POST)
+    public ResponseDto login(@RequestBody UserDto userDto) {
+        userDto.setPassword(DigestUtils.md5DigestAsHex(userDto.getPassword().getBytes()));
+        LoginUserDto login = userService.login(userDto);
+        return  new ResponseDto().ok(0,"登录成功!",login);
+    }
+
 
 }

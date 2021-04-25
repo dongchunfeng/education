@@ -33,10 +33,10 @@
                 :rules="rules"
                 :model="formLogin"
                 size="default">
-                <el-form-item prop="username">
+                <el-form-item prop="loginName">
                   <el-input
                     type="text"
-                    v-model="formLogin.username"
+                    v-model="formLogin.loginName"
                     placeholder="用户名">
                     <i slot="prepend" class="fa fa-user-circle-o"></i>
                   </el-input>
@@ -138,29 +138,29 @@ export default {
       users: [
         {
           name: 'Admin',
-          username: 'admin',
+          loginName: 'admin',
           password: 'admin'
         },
         {
           name: 'Editor',
-          username: 'editor',
+          loginName: 'editor',
           password: 'editor'
         },
         {
           name: 'User1',
-          username: 'user1',
+          loginName: 'user1',
           password: 'user1'
         }
       ],
       // 表单
       formLogin: {
-        username: 'admin',
+        loginName: 'admin',
         password: 'admin',
         code: 'v9am'
       },
       // 表单校验
       rules: {
-        username: [
+        loginName: [
           {
             required: true,
             message: '请输入用户名',
@@ -204,7 +204,7 @@ export default {
      * @param {Object} user 用户信息
      */
     handleUserBtnClick (user) {
-      this.formLogin.username = user.username
+      this.formLogin.loginName = user.loginName
       this.formLogin.password = user.password
       this.submit()
     },
@@ -218,13 +218,13 @@ export default {
           // 登录
           // 注意 这里的演示没有传验证码
           // 具体需要传递的数据请自行修改代码
-          this.login({
-            username: this.formLogin.username,
-            password: this.formLogin.password
-          })
+          this.formLogin.password = hex_md5(this.formLogin.password+KEY);
+          this.login(this.formLogin)
             .then(() => {
               // 重定向对象不存在则返回顶层路径
+              
               this.$router.replace(this.$route.query.redirect || '/')
+              
             })
         } else {
           // 登录表单校验失败

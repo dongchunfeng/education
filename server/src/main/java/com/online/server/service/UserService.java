@@ -4,15 +4,20 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.online.server.domain.User;
 import com.online.server.domain.UserExample;
-import com.online.server.dto.UserDto;
+import com.online.server.dto.LoginUserDto;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.ResponseDto;
+import com.online.server.dto.UserDto;
+import com.online.server.exception.BusinessException;
+import com.online.server.exception.BusinessExceptionCode;
 import com.online.server.mapper.UserMapper;
 import com.online.server.util.CopyUtil;
 import com.online.server.util.UuidUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -29,6 +34,7 @@ import java.util.List;
  * @Date 2021/4/9 14:24
  */
 @Service
+@Slf4j
 public class UserService {
 
     @Resource
@@ -127,7 +133,8 @@ public class UserService {
      * @return
      */
     private int update(User user) {
-        return userMapper.updateByPrimaryKey(user);
+        user.setPassword(null);
+        return userMapper.updateByPrimaryKeySelective(user);
     }
 
     /**
@@ -137,7 +144,39 @@ public class UserService {
         return userMapper.deleteByPrimaryKey(id);
     }
 
+    public int savePassword(UserDto userDto){
+        User user = new User();
+        user.setId(userDto.getId());
+        user.setPassword(userDto.getPassword());
+        return userMapper.updateByPrimaryKeySelective(user);
+    }
 
+    public User findByLoginName(String loginName){
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andLoginNameEqualTo(loginName);
+        List<User> users = userMapper.selectByExample(userExample);
+        if(CollectionUtils.isEmpty(users)){
+            return null;
+        }
+        return users.get(0);
+    }
 
+    public LoginUserDto login(UserDto userDto){
+        User user = findByLoginName(userDto.getLoginName());
+        if(user==null){
+            log.info("用户名不存在: {}",userDto.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        }else{
+            if(user.getPassword().equals(userDto.getPassword())){
+                //登录成功
+                LoginUserDto copy = CopyUtil.copy(user, LoginUserDto.class);
+                copy.setToken(UuidUtil.getUuid());
+                return copy;
+            }else {
+                log.info("密码不对，输入密码: {}, 数据库密码: {}",userDto.getPassword(),user.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
+    }
 
 }

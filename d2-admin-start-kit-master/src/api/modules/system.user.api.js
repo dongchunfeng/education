@@ -37,6 +37,14 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'get',
       data
     })
+  },
+  SYSTEM_USER_SAVEPASSWORD(data = {}){
+    // 接口请求
+    return request({
+      url: '/system/admin/user/save-password',
+      method: 'post',
+      data
+    })
   }
 
 
