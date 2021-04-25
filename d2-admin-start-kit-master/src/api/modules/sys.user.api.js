@@ -19,5 +19,14 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'post',
       data
     })
+  },
+  SYS_USER_LOGOUT (data = {}) {
+   
+    // 接口请求
+    return request({
+      url: '/system/admin/user/logout',
+      method: 'get',
+      data
+    })
   }
 })

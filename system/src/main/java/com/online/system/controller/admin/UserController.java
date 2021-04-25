@@ -6,6 +6,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Description
@@ -76,11 +77,17 @@ public class UserController {
     }
 
     @RequestMapping(path = "/user/login", method = RequestMethod.POST)
-    public ResponseDto login(@RequestBody UserDto userDto) {
+    public ResponseDto login(@RequestBody UserDto userDto, HttpServletRequest request) {
         userDto.setPassword(DigestUtils.md5DigestAsHex(userDto.getPassword().getBytes()));
         LoginUserDto login = userService.login(userDto);
+        request.getSession().setAttribute(Constants.LOGIN_USER,login);
         return  new ResponseDto().ok(0,"登录成功!",login);
     }
 
+    @RequestMapping(path = "/user/logout", method = RequestMethod.GET)
+    public ResponseDto logout(HttpServletRequest request) {
+        request.getSession().removeAttribute(Constants.LOGIN_USER);
+        return ResponseDto.ok(0,"注销成功!");
+    }
 
 }

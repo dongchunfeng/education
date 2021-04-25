@@ -59,6 +59,9 @@
                     </template>
                   </el-input>
                 </el-form-item>
+                <el-form-item>
+                  <el-checkbox v-model="formLogin.remember">记住我</el-checkbox>
+                </el-form-item>
                 <el-button
                   size="default"
                   @click="submit"
@@ -152,11 +155,14 @@ export default {
           password: 'user1'
         }
       ],
+      
       // 表单
       formLogin: {
-        loginName: 'admin',
-        password: 'admin',
-        code: 'v9am'
+        loginName: '',
+        password: '',
+        remember:true,
+        code: 'v9am',
+        passwordShow: '',
       },
       // 表单校验
       rules: {
@@ -185,6 +191,11 @@ export default {
     }
   },
   mounted () {
+    let rememberUser = LocalStorage.get("loginUser") || {};
+    if(rememberUser){
+      this.formLogin.loginName = rememberUser.loginName;
+      this.formLogin.password = rememberUser.password;
+    }
     this.timeInterval = setInterval(() => {
       this.refreshTime()
     }, 1000)
@@ -216,8 +227,8 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           // 登录
-          // 注意 这里的演示没有传验证码
-          // 具体需要传递的数据请自行修改代码
+          let passwordShow = this.formLogin.password;
+          this.formLogin.passwordShow = passwordShow;
           this.formLogin.password = hex_md5(this.formLogin.password+KEY);
           this.login(this.formLogin)
             .then(() => {
