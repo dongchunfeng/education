@@ -227,9 +227,12 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           // 登录
-          let passwordShow = this.formLogin.password;
-          this.formLogin.passwordShow = passwordShow;
-          this.formLogin.password = hex_md5(this.formLogin.password+KEY);
+          //拿到缓存的md5与用户输入的密码做比较 如果一样就不需要加密  否则加密
+          let md5 = hex_md5(this.formLogin.password);
+          let rememberUser = LocalStorage.get("loginUser") || {};
+          if(md5 != rememberUser.md5){
+              this.formLogin.password = hex_md5(this.formLogin.password+KEY);
+          }
           this.login(this.formLogin)
             .then(() => {
               // 重定向对象不存在则返回顶层路径

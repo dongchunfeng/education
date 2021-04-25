@@ -17,8 +17,7 @@ export default {
       loginName = '',
       password = '',
       code = '',
-      remember = '',
-      passwordShow= ''
+      remember = ''
     } = {}) {
       const res = await api.SYS_USER_LOGIN({ loginName, password,code })
       // 设置 cookie 一定要存 uuid 和 token 两个 cookie
@@ -29,9 +28,11 @@ export default {
       if(res.success){
         let loginUser = res.data;
         if(remember){
+          let md5 = hex_md5(password);
           LocalStorage.set("loginUser",{
             loginName: loginUser.loginName,
-            password: passwordShow
+            password: password,
+            md5: md5
           });
         }else{
           LocalStorage.set("loginUser",null);
