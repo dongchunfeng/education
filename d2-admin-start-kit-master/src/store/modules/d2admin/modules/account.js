@@ -17,9 +17,10 @@ export default {
       loginName = '',
       password = '',
       code = '',
-      remember = ''
+      remember = '',
+      imageCodeToken=''
     } = {}) {
-      const res = await api.SYS_USER_LOGIN({ loginName, password,code })
+      const res = await api.SYS_USER_LOGIN({ loginName, password,code,imageCodeToken })
       // 设置 cookie 一定要存 uuid 和 token 两个 cookie
       // 整个系统依赖这两个数据进行校验和存储
       // uuid 是用户身份唯一标识 用户注册的时候确定 并且不可改变 不可重复
@@ -43,6 +44,8 @@ export default {
         await dispatch('d2admin/user/set', { name: res.data.loginName }, { root: true })
         // 用户登录后从持久化数据加载一系列的设置
         await dispatch('load')
+      }else{
+        Message.error(res.msg);
       }
     },
     /**
@@ -56,7 +59,10 @@ export default {
        */
       async function logout () {
         //
-        const res = await api.SYS_USER_LOGOUT();
+        let token = util.cookies.get("token");
+        console.log("token==========");
+        console.log(token);
+        const res = await api.SYS_USER_LOGOUT(token);
         if(res.success){
             // 删除cookie
             util.cookies.remove('token')

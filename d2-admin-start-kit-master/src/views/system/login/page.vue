@@ -55,7 +55,7 @@
                     v-model="formLogin.code"
                     placeholder="验证码">
                     <template slot="append">
-                      <img class="login-code" src="./image/login-code.png">
+                      <img @click="loadImageCode()" class="login-code" id="imageCode">
                     </template>
                   </el-input>
                 </el-form-item>
@@ -128,6 +128,7 @@
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import localeMixin from '@/locales/mixin.js'
+import $ from 'jquery'
 export default {
   mixins: [
     localeMixin
@@ -161,8 +162,8 @@ export default {
         loginName: '',
         password: '',
         remember:true,
-        code: 'v9am',
-        passwordShow: '',
+        code: '',
+        imageCodeToken:''
       },
       // 表单校验
       rules: {
@@ -196,6 +197,7 @@ export default {
       this.formLogin.loginName = rememberUser.loginName;
       this.formLogin.password = rememberUser.password;
     }
+    this.loadImageCode();//初始化验证码
     this.timeInterval = setInterval(() => {
       this.refreshTime()
     }, 1000)
@@ -236,15 +238,20 @@ export default {
           this.login(this.formLogin)
             .then(() => {
               // 重定向对象不存在则返回顶层路径
-              
+             
               this.$router.replace(this.$route.query.redirect || '/')
               
             })
         } else {
+          this.loadImageCode();
           // 登录表单校验失败
           this.$message.error('表单校验失败，请检查')
         }
       })
+    },
+    loadImageCode(){
+      this.formLogin.imageCodeToken = Tool.uuid(8);
+      $("#imageCode").attr("src",process.env.VUE_APP_API+"/system/admin/kaptcha/image-code/"+this.formLogin.imageCodeToken);
     }
   }
 }

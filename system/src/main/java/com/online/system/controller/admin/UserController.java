@@ -1,12 +1,21 @@
 package com.online.system.controller.admin;
 
+import com.alibaba.fastjson.JSON;
 import com.online.server.dto.*;
 import com.online.server.service.UserService;
+import com.online.server.util.CookieUtils;
+import com.online.server.util.RedisKeyUtil;
+import com.online.server.util.UuidUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description
@@ -17,10 +26,14 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/admin")
+@Slf4j
 public class UserController {
 
     @Resource
     private UserService userService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     public static final String BUSINESS_NAME = "用户";
 
     /**
@@ -78,15 +91,37 @@ public class UserController {
 
     @RequestMapping(path = "/user/login", method = RequestMethod.POST)
     public ResponseDto login(@RequestBody UserDto userDto, HttpServletRequest request) {
+        log.info("用户登录开始");
         userDto.setPassword(DigestUtils.md5DigestAsHex(userDto.getPassword().getBytes()));
+        //校验验证码
+        //String imageCode = (String) request.getSession().getAttribute(userDto.getImageCodeToken());
+        String educationKaptcha = CookieUtils.getValue(request, "educationKaptcha");
+        if(StringUtils.isBlank(educationKaptcha)){
+            log.info("用户登录失败 验证码已过期");
+            return ResponseDto.fail(0,"验证码已过期");
+        }else{
+            String kaptchaKey = RedisKeyUtil.getKaptcha(educationKaptcha);
+            String kaptcha =  (String)redisTemplate.opsForValue().get(kaptchaKey);
+            if(!kaptcha.toLowerCase().equals(userDto.getCode().toLowerCase())){
+                log.info("用户登录失败 验证码不对");
+                return ResponseDto.fail(0,"验证码不对");
+            }
+        }
+
         LoginUserDto login = userService.login(userDto);
-        request.getSession().setAttribute(Constants.LOGIN_USER,login);
+        String token = UuidUtil.getShortUuid();
+        login.setToken(token);
+       // request.getSession().setAttribute(Constants.LOGIN_USER,login);
+        redisTemplate.opsForValue().set(token, JSON.toJSONString(login),3600, TimeUnit.SECONDS);
+
         return  new ResponseDto().ok(0,"登录成功!",login);
     }
 
-    @RequestMapping(path = "/user/logout", method = RequestMethod.GET)
-    public ResponseDto logout(HttpServletRequest request) {
-        request.getSession().removeAttribute(Constants.LOGIN_USER);
+    @RequestMapping(path = "/user/logout/{token}", method = RequestMethod.GET)
+    public ResponseDto logout(@PathVariable String token) {
+        //request.getSession().removeAttribute(Constants.LOGIN_USER);
+        redisTemplate.delete(token);
+        log.info("从redis中删除token: {}",token);
         return ResponseDto.ok(0,"注销成功!");
     }
 

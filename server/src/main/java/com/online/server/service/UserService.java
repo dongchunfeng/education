@@ -162,6 +162,12 @@ public class UserService {
     }
 
     public LoginUserDto login(UserDto userDto){
+        if(StringUtils.isBlank(userDto.getLoginName())){
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_NOT_NULL);
+        }
+        if(StringUtils.isBlank(userDto.getPassword())){
+            throw new BusinessException(BusinessExceptionCode.LOGIN_PASSWORD_NOT_NULL);
+        }
         User user = findByLoginName(userDto.getLoginName());
         if(user==null){
             log.info("用户名不存在: {}",userDto.getLoginName());
@@ -169,9 +175,7 @@ public class UserService {
         }else{
             if(user.getPassword().equals(userDto.getPassword())){
                 //登录成功
-                LoginUserDto copy = CopyUtil.copy(user, LoginUserDto.class);
-                copy.setToken(UuidUtil.getUuid());
-                return copy;
+                return CopyUtil.copy(user, LoginUserDto.class);
             }else {
                 log.info("密码不对，输入密码: {}, 数据库密码: {}",userDto.getPassword(),user.getPassword());
                 throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);

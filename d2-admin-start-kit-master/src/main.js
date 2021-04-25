@@ -6,14 +6,12 @@ import App from './App'
 import d2Admin from '@/plugin/d2admin'
 // store
 import store from '@/store/index'
-import $ from 'jquery'
 
 // 菜单和路由设置
 import router from './router'
 import { menuHeader, menuAside } from '@/menu'
 import { frameInRoutes } from '@/router/routes'
 import ElementUI from 'element-ui'
-
 
 
 // 核心插件

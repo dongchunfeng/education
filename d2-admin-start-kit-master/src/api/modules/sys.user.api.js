@@ -21,10 +21,10 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
     })
   },
   SYS_USER_LOGOUT (data = {}) {
-   
+   console.log(data);
     // 接口请求
     return request({
-      url: '/system/admin/user/logout',
+      url: '/system/admin/user/logout/'+data,
       method: 'get',
       data
     })

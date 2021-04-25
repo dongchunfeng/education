@@ -9,7 +9,9 @@ import { errorLog, errorCreate } from './tools'
  */
 function createService () {
   // 创建一个 axios 实例
+  
   const service = axios.create()
+
   // 请求拦截
   service.interceptors.request.use(
     config => config,
@@ -76,7 +78,9 @@ function createService () {
  * @param {Object} service axios 实例
  */
 function createRequestFunction (service) {
+  
   return function (config) {
+    
     const token = util.cookies.get('token')
     const configDefault = {
       headers: {
