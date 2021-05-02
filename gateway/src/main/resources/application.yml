@@ -8,14 +8,24 @@ spring:
         uri: http://127.0.0.1:9001
         predicates:
         - Path=/system/**
+        filters:
+        - LoginAdmin=true
       - id: business
         uri: lb://business
         predicates:
         - Path=/business/**
+        filters:
+          - LoginAdmin=true
       - id: file
         uri: lb://file
         predicates:
         - Path=/file/**
+        filters:
+          - LoginAdmin=true
+  redis:
+    database: 2
+    host: localhost
+    port: 6379
 server:
   port: 9000
 eureka:
