@@ -32,22 +32,22 @@ const frameIn = [
         component: _import('demo/user')
       },
       {
-        path: 'page2',
-        name: 'page2',
+        path: 'resource',
+        name: 'resource',
         meta: {
           title: '资源管理',
           auth: true
         },
-        component: _import('demo/page2')
+        component: _import('demo/resource')
       },
       {
-        path: 'page3',
-        name: 'page3',
+        path: 'role',
+        name: 'role',
         meta: {
           title: '角色管理',
           auth: true
         },
-        component: _import('demo/page3')
+        component: _import('demo/role')
       },
       {
         path: 'category',

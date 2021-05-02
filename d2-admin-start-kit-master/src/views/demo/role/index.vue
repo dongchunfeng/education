@@ -1,12 +1,12 @@
 <template>
   <d2-container>
-    <template slot="header">资源管理</template>
+    <template slot="header">角色管理</template>
     Hello World
   </d2-container>
 </template>
 
 <script>
 export default {
-  name: 'page2'
+  name: 'role'
 }
 </script>

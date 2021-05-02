@@ -1,38 +1,31 @@
 <template>
   <d2-container>
-    <el-dialog :title="title" :visible.sync="dialogForm${Domain}Visible">
+    <el-dialog :title="title" :visible.sync="dialogFormResourceVisible">
   <el-form :model="form" label-width="80px" :rules="rules" ref="ruleForm">
-      <#list fieldList as field>
-          <#if field.name!='id' && field.nameHump!='createAt'&&field.nameHump!='updateAt'>
-              <el-form-item label="${field.nameCn}" prop="${field.nameHump}">
-              <#if field.enums>
-                      <el-select v-model="form.${field.nameHump}" placeholder="请选择">
-                          <el-option
-                                  v-for="item in ${field.enumsConst}"
-                                  :key="item.value"
-                                  :label="item.label"
-                                  :value="item.value">
-                          </el-option>
-                      </el-select>
-
-              <#else>
-              <el-input v-model="form.${field.nameHump}" autocomplete="off"></el-input>
-              </#if>
+              <el-form-item label="名称" prop="name">
+              <el-input v-model="form.name" autocomplete="off"></el-input>
               </el-form-item>
-          </#if>
-      </#list>
+              <el-form-item label="页面" prop="page">
+              <el-input v-model="form.page" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="请求" prop="request">
+              <el-input v-model="form.request" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="父id" prop="parent">
+              <el-input v-model="form.parent" autocomplete="off"></el-input>
+              </el-form-item>
   </el-form>
   <div slot="footer" class="dialog-footer">
     <el-button @click="resetForm('ruleForm')">重置</el-button>
-    <el-button @click="dialogForm${Domain}Visible = false">取 消</el-button>
+    <el-button @click="dialogFormResourceVisible = false">取 消</el-button>
     <el-button type="primary" @click="save('ruleForm')">确 定</el-button>
   </div>
 </el-dialog>
     <template slot="header">
       <el-form :model="params">
-      ${searchname}:<el-input v-model="params.${Searchname}" style="width:100px;margin-right:5px"></el-input>
+      昵称:<el-input v-model="params.name" style="width:100px;margin-right:5px"></el-input>
       <el-button type="primary" v-on:click="getTableData" size="small" style="margin-right:5px">查询</el-button>
-      <el-button type="primary" v-on:click="open${Domain}Html('ruleForm')" size="small">新增${tableNameCn}</el-button>
+      <el-button type="primary" v-on:click="openResourceHtml('ruleForm')" size="small">新增资源</el-button>
     </el-form>
     </template>
     <el-table
@@ -44,15 +37,31 @@
       type="selection"
       width="55">
     </el-table-column>
-    <#list fieldList as field>
-        <#if field.nameHump!='createAt' && field.nameHump!='updateAt'>
             <el-table-column
-                    prop="${field.nameHump}"
-                    label="${field.nameCn}"
+                    prop="id"
+                    label="id"
                     width="100">
             </el-table-column>
-        </#if>
-    </#list>
+            <el-table-column
+                    prop="name"
+                    label="名称"
+                    width="100">
+            </el-table-column>
+            <el-table-column
+                    prop="page"
+                    label="页面"
+                    width="100">
+            </el-table-column>
+            <el-table-column
+                    prop="request"
+                    label="请求"
+                    width="100">
+            </el-table-column>
+            <el-table-column
+                    prop="parent"
+                    label="父id"
+                    width="100">
+            </el-table-column>
 
     <el-table-column
       label="操作"
@@ -84,7 +93,7 @@
 
 <script>
 export default {
-    name: '${domain}',
+    name: 'resource',
     created(){
       this.getTableData();
     },
@@ -93,38 +102,52 @@ export default {
         visible: false,
         title:"",
         ruleForm: {
-          <#list fieldList as field>
-            "${field.nameHump}":'',
-          </#list>
+            "id":'',
+            "name":'',
+            "page":'',
+            "request":'',
+            "parent":'',
         },
         rules: {
-          <#list fieldList as field >
-            "${field.nameHump}": [
-                { required: false, message: '请选择${field.nameCn}', trigger: 'change' }
+            "id": [
+                { required: true, message: '请选择id', trigger: 'change' }
             ],
-          </#list>
+            "name": [
+                { required: false, message: '请选择名称', trigger: 'change' }
+            ],
+            "page": [
+                { required: false, message: '请选择页面', trigger: 'change' }
+            ],
+            "request": [
+                { required: false, message: '请选择请求', trigger: 'change' }
+            ],
+            "parent": [
+                { required: false, message: '请选择父id', trigger: 'change' }
+            ],
         },
         form:{
-            <#list fieldList as field>
-            "${field.nameHump}":'',
-            </#list>
+            "id":'',
+            "name":'',
+            "page":'',
+            "request":'',
+            "parent":'',
         },
-        dialogForm${Domain}Visible:false,
+        dialogFormResourceVisible:false,
         formLabelWidth: '100px',
         total: 0,
         params: {
           page: 1,
           size: 5,
-          "${Searchname}":''
+          "name":''
         },
         multipleSelection: [],
         tableData: []
       }
     },
     methods: {
-      open${Domain}Html(formName){
-        this.dialogForm${Domain}Visible = true;
-        this.title="添加${tableNameCn}";
+      openResourceHtml(formName){
+        this.dialogFormResourceVisible = true;
+        this.title="添加资源";
         this.$nextTick(function(){
           this.$refs[formName].clearValidate()
         })
@@ -141,14 +164,14 @@ export default {
 
         this.$refs[formName].validate(async (valid) => {
           if (valid) {
-            const res = await this.$api.${module}_${DOMAIN}_ADD(this.form);
+            const res = await this.$api.system_RESOURCE_ADD(this.form);
           if(res.code==0){
             this.$notify({
             title: '成功',
             message: res.msg,
             type: 'success'
           });
-          this.dialogForm${Domain}Visible = false;
+          this.dialogFormResourceVisible = false;
           this.resetForm(formName);
           this.getTableData();
           }else{
@@ -165,12 +188,14 @@ export default {
       },
       handleClickEdit(row) {
         console.log(row);
-        this.dialogForm${Domain}Visible = true;
-        this.title="修改${tableNameCn}";
-        <#list fieldList as field>
-          this.form.${field.nameHump} = row.${field.nameHump};
-        </#list>
-        console.log("修改${tableNameCn} form: =======================");
+        this.dialogFormResourceVisible = true;
+        this.title="修改资源";
+          this.form.id = row.id;
+          this.form.name = row.name;
+          this.form.page = row.page;
+          this.form.request = row.request;
+          this.form.parent = row.parent;
+        console.log("修改资源 form: =======================");
         console.log(this.form);
       },
       del(id){
@@ -179,7 +204,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(async () => {
-          const res = await this.$api.${module}_${DOMAIN}_DEL(id);
+          const res = await this.$api.system_RESOURCE_DEL(id);
           if(res.code==0){
               this.$notify({
               title: '成功',
@@ -214,8 +239,8 @@ export default {
       },
       async getTableData () {
         try {
-          const res = await this.$api.${module}_${DOMAIN}(this.params);
-          console.log("分页查询${tableNameCn}:");
+          const res = await this.$api.system_RESOURCE(this.params);
+          console.log("分页查询资源:");
           console.log(res);
           this.tableData = res.data.list;
           this.total = res.data.total;
