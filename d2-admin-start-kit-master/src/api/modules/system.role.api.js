@@ -57,6 +57,26 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'post',
       data
     })
+  },
+  system_SAVE_ROLEUSER (data = {}) {
+    
+
+    // 接口请求
+    return request({
+      url: '/system/admin/role/saveUser',
+      method: 'post',
+      data
+    })
+  },
+  system_LIST_ROLEUSER (data = {}) {
+    
+
+    // 接口请求
+    return request({
+      url: '/system/admin/role/listRoleUser/'+data,
+      method: 'get',
+      data
+    })
   }
 
 

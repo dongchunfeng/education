@@ -36,6 +36,9 @@
 
       <el-table-column label="操作" width="100">
         <template slot-scope="scope">
+          <el-button @click="editUser(scope.row)" type="text" size="small"
+            >用户</el-button
+          >
           <el-button @click="editResource(scope.row)" type="text" size="small"
             >资源</el-button
           >
@@ -65,18 +68,36 @@
 
     <el-dialog :title="title" :visible.sync="dialogFormEditResourceVisible">
       <el-tree
-            :props="defaultProps"
-            :data="resourceList"
-            :default-checked-keys="checkedKeys"
-            show-checkbox
-            node-key="id"
-            ref="tree"
-            :default-expand-all="true"
-          >
-          </el-tree>
+        :props="defaultProps"
+        :data="resourceList"
+        :default-checked-keys="checkedKeys"
+        show-checkbox
+        node-key="id"
+        ref="tree"
+        :default-expand-all="true"
+      >
+      </el-tree>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormEditResourceVisible = false">取 消</el-button>
+        <el-button @click="dialogFormEditResourceVisible = false"
+          >取 消</el-button
+        >
         <el-button type="primary" @click="saveResource()">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog :title="title" :visible.sync="dialogFormEditUserVisible">
+      <el-transfer
+        v-model="roleUsers"
+        :props="{
+          key: 'id',
+          label: 'name',
+        }"
+        :data="users"
+      >
+      </el-transfer>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormEditUserVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveUserRole()">确 定</el-button>
       </div>
     </el-dialog>
   </d2-container>
@@ -89,6 +110,7 @@
 </style>
 
 <script>
+import $ from "jquery";
 export default {
   name: "role",
   created() {
@@ -118,10 +140,11 @@ export default {
       form: {
         id: "",
         name: "",
-        desc: ""
+        desc: "",
       },
       dialogFormRoleVisible: false,
-      dialogFormEditResourceVisible:false,
+      dialogFormEditResourceVisible: false,
+      dialogFormEditUserVisible: false,
       formLabelWidth: "100px",
       total: 0,
       params: {
@@ -131,6 +154,8 @@ export default {
       },
       multipleSelection: [],
       tableData: [],
+      users: [],
+      roleUsers: [],
     };
   },
   methods: {
@@ -150,7 +175,6 @@ export default {
       this.$refs[formName].resetFields();
     },
     save(formName) {
-
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
           const res = await this.$api.system_ROLE_ADD(this.form);
@@ -244,26 +268,25 @@ export default {
       const res = await this.$api.system_LIST_ROLERESOURCE(role.id);
       console.log("查询角色资源:");
       console.log(res);
-      this.checkedKeys=[];
+      this.checkedKeys = [];
       this.$refs.tree.setCheckedKeys([]);
 
-      if(Tool.isEmpty(res.data)){
-            return;
-        }
+      if (Tool.isEmpty(res.data)) {
+        return;
+      }
       for (let index = 0; index < res.data.length; index++) {
-        const element =  res.data[index].resourceId;
+        const element = res.data[index].resourceId;
         this.checkedKeys.push(element);
       }
-
     },
-    async saveResource(){
-       let roleResource = this.$refs.tree.getCheckedNodes();
-      if(Tool.isEmpty(roleResource)){
-          this.$notify.error({
-              title: "错误",
-              message: '请选中一个资源',
-            });
-            return;
+    async saveResource() {
+      let roleResource = this.$refs.tree.getCheckedNodes();
+      if (Tool.isEmpty(roleResource)) {
+        this.$notify.error({
+          title: "错误",
+          message: "请选中一个资源",
+        });
+        return;
       }
 
       let resourceIds = [];
@@ -273,19 +296,71 @@ export default {
 
       const res = await this.$api.system_SAVE_ROLERESOURCE({
         id: this.form.id,
-        resourceIds: resourceIds
+        resourceIds: resourceIds,
       });
       console.log(res);
-      if(res.success){
+      if (res.success) {
         this.$notify({
-              title: "成功",
-              message: res.msg,
-              type: "success",
-            });
-          this.dialogFormEditResourceVisible = false;  
+          title: "成功",
+          message: res.msg,
+          type: "success",
+        });
+        this.dialogFormEditResourceVisible = false;
       }
+    },
+    editUser(role) {
+      this.title = "关联用户角色";
+      this.form = $.extend({}, role);
+      console.log("editUser==========");
+      console.log(this.form);
+      this.listUser();
+      this.dialogFormEditUserVisible = true;
+      this.roleUsers = [];
+    },
+    async listUser() {
+      this.users = [];
+      const res = await this.$api.SYSTEM_USER_ALL();
 
-    }
+      if (res.success) {
+        for (let index = 0; index < res.data.length; index++) {
+          const element = res.data[index];
+          let id = element.id;
+          let name = element.loginName;
+          this.users.push({ id: id, name: name });
+        }
+
+        this.listRoleUser();
+
+
+      }
+    },
+    async saveUserRole() {
+      console.log(this.roleUsers);
+      const res = await this.$api.system_SAVE_ROLEUSER({
+        id: this.form.id,
+        userIds: this.roleUsers,
+      });
+
+      if (res.success) {
+        this.$notify({
+          title: "成功",
+          message: res.msg,
+          type: "success",
+        });
+        this.dialogFormEditUserVisible = false;
+      }
+    },
+    async listRoleUser(){
+        const res = await this.$api.system_LIST_ROLEUSER(this.form.id);
+        console.log("listRoleUser=========");
+        console.log(res);
+        if(res.success){
+            for (let index = 0; index < res.data.length; index++) {
+              const element = res.data[index];
+              this.roleUsers.push(element.userId);
+            }
+        }
+    },
   },
 };
 </script>

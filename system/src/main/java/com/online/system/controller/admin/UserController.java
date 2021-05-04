@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,6 +47,12 @@ public class UserController {
     @RequestMapping(path = "/user/{page}/{size}", method = RequestMethod.GET)
     public ResponseDto list(@PathVariable int page, @PathVariable int size, QueryUserDto qs) {
         PageDto all = userService.findAll(page, size, qs.getName());
+        return new ResponseDto().ok(0, "用户列表查询成功", all);
+    }
+
+    @RequestMapping(path = "/user", method = RequestMethod.GET)
+    public ResponseDto list() {
+        List<UserDto> all = userService.findAll();
         return new ResponseDto().ok(0, "用户列表查询成功", all);
     }
 
@@ -112,7 +119,7 @@ public class UserController {
         String token = UuidUtil.getShortUuid();
         login.setToken(token);
        // request.getSession().setAttribute(Constants.LOGIN_USER,login);
-        redisTemplate.opsForValue().set(token, JSON.toJSONString(login),3600, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(token, JSON.toJSONString(login),3600*24, TimeUnit.SECONDS);
 
         return  new ResponseDto().ok(0,"登录成功!",login);
     }

@@ -2,15 +2,13 @@ package com.online.server.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.online.server.domain.Role;
-import com.online.server.domain.RoleExample;
-import com.online.server.domain.RoleResource;
-import com.online.server.domain.RoleResourceExample;
+import com.online.server.domain.*;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.ResponseDto;
 import com.online.server.dto.RoleDto;
 import com.online.server.mapper.RoleMapper;
 import com.online.server.mapper.RoleResourceMapper;
+import com.online.server.mapper.RoleUserMapper;
 import com.online.server.util.CopyUtil;
 import com.online.server.util.UuidUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +35,8 @@ public class RoleService {
     private RoleMapper roleMapper;
     @Resource
     private RoleResourceMapper roleResourceMapper;
+    @Resource
+    private RoleUserMapper roleUserMapper;
 
     /**
      * 分页查询
@@ -136,5 +136,23 @@ public class RoleService {
 
     }
 
+    @Transactional
+    public void saveUser(RoleDto roleDto){
+        String roleDtoId = roleDto.getId();
+        List<String> userIds = roleDto.getUserIds();
+        RoleUserExample roleUserExample = new RoleUserExample();
+        roleUserExample.createCriteria().andRoleIdEqualTo(roleDtoId);
+        roleUserMapper.deleteByExample(roleUserExample);
+
+        for (int i = 0; i < userIds.size(); i++) {
+            String s = userIds.get(i);
+            RoleUser roleUser = new RoleUser();
+            roleUser.setId(UuidUtil.getShortUuid());
+            roleUser.setRoleId(roleDtoId);
+            roleUser.setUserId(s);
+            roleUserMapper.insert(roleUser);
+        }
+
+    }
 
 }

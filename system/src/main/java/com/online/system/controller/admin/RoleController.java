@@ -1,11 +1,9 @@
 package com.online.system.controller.admin;
 
-import com.online.server.dto.PageDto;
-import com.online.server.dto.ResponseDto;
-import com.online.server.dto.RoleDto;
-import com.online.server.dto.RoleResourceDto;
+import com.online.server.dto.*;
 import com.online.server.service.RoleResourceService;
 import com.online.server.service.RoleService;
+import com.online.server.service.RoleUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +28,8 @@ public class RoleController {
     public static final String BUSINESS_NAME = "角色";
     @Autowired
     private RoleResourceService roleResourceService;
+    @Autowired
+    private RoleUserService roleUserService;
 
     /**
      * 分页查询
@@ -60,6 +60,13 @@ public class RoleController {
         return new ResponseDto().ok(0,"添加资源成功",roleDto);
     }
 
+    @PostMapping("/role/saveUser")
+    public ResponseDto<RoleDto> saveUser(@RequestBody RoleDto roleDto){
+        log.info("保存用户角色关联开始");
+        roleService.saveUser(roleDto);
+        return new ResponseDto().ok(0,"添加用户成功",roleDto);
+    }
+
     /**
      * 删除
      * @param id
@@ -81,6 +88,15 @@ public class RoleController {
             return new ResponseDto().ok(0, "查询角色资源成功",allRoleResourceByRoleId);
         }
         return ResponseDto.fail(0, "查询角色资源失败");
+    }
+
+    @RequestMapping(path = "/role/listRoleUser/{roleId}", method = RequestMethod.GET)
+    public ResponseDto listRoleUser(@PathVariable String roleId) {
+        List<RoleUserDto> roleUserByRoleId = roleUserService.findRoleUserByRoleId(roleId);
+        if (roleUserByRoleId.size() > 0) {
+            return new ResponseDto().ok(0, "查询用户角色成功",roleUserByRoleId);
+        }
+        return ResponseDto.fail(0, "查询用户角色失败");
     }
 
 }

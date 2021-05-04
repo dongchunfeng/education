@@ -468,8 +468,8 @@ export default {
         this.row = row
         this.column = column
         this.active = row;
-        console.log(row);
-        console.log(this.active);
+        // console.log(row);
+        // console.log(this.active);
         this.level2 = row.children;
     }
   },

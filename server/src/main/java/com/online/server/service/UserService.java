@@ -69,6 +69,18 @@ public class UserService {
         return pageDto;
     }
 
+    public List<UserDto> findAll() {
+        UserExample userExample = new UserExample();
+        List<User> users = userMapper.selectByExample(userExample);
+        List<UserDto> userDtoList = new ArrayList<>();
+        for (User user : users) {
+            UserDto userDto = new UserDto();
+            BeanUtils.copyProperties(user, userDto);
+            userDtoList.add(userDto);
+        }
+        return userDtoList;
+    }
+
     /**
      * 根据name查询
      * @param name

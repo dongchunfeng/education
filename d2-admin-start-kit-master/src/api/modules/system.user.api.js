@@ -45,7 +45,16 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'post',
       data
     })
-  }
+  },
+  SYSTEM_USER_ALL (data = {}) {
+
+    // 接口请求
+    return request({
+      url: '/system/admin/user',
+      method: 'get',
+      data
+    })
+  },
 
 
 })

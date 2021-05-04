@@ -174,6 +174,7 @@ export default {
               title: "错误",
               message: '资源不能为空',
             });
+            return;
       }
       let json  = JSON.parse(this.textarea);
       const res = await this.$api.system_RESOURCE_ADD(json);

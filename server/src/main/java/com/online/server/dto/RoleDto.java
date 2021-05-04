@@ -25,4 +25,6 @@ public class RoleDto {
 
     private List<String> resourceIds;
 
+    private List<String> userIds;
+
 }
