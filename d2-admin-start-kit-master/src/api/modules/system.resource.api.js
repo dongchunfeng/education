@@ -37,7 +37,16 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'get',
       data
     })
-  }
+  },
+  system_RESOURCE_ALL (data = {}) {
+
+    // 接口请求
+    return request({
+      url: '/system/admin/resource',
+      method: 'get',
+      data
+    })
+  },
 
 
 })

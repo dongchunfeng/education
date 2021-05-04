@@ -7,6 +7,8 @@ import com.online.server.dto.ResponseDto;
 import com.online.server.service.ResourceService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @Description
  * @Author Mr.Dong <dongcf1997@163.com>
@@ -35,14 +37,19 @@ public class ResourceController {
         return new ResponseDto().ok(0, "资源列表查询成功", all);
     }
 
+    @RequestMapping(path = "/resource", method = RequestMethod.GET)
+    public List<ResourceDto> list() {
+        return resourceService.findAll();
+    }
+
     /**
      * 保存 id有值更新 无值时新增
-     * @param resourceDto
+     * @param jsonStr
      * @return
      */
     @RequestMapping(path = "/resource/add", method = RequestMethod.POST)
-    public ResponseDto save(@RequestBody ResourceDto resourceDto) {
-        return resourceService.save(resourceDto);
+    public ResponseDto save(@RequestBody String jsonStr) {
+        return resourceService.saveJson(jsonStr)==1?ResponseDto.ok(0,"保存资源成功"):ResponseDto.fail(1,"保存资源失败");
     }
 
     /**
