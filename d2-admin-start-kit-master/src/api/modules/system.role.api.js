@@ -37,6 +37,26 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'get',
       data
     })
+  },
+  system_LIST_ROLERESOURCE (data = {}) {
+    
+
+    // 接口请求
+    return request({
+      url: '/system/admin/role/listRoleResource/'+data,
+      method: 'get',
+      data
+    })
+  },
+  system_SAVE_ROLERESOURCE (data = {}) {
+    
+
+    // 接口请求
+    return request({
+      url: '/system/admin/role/saveResource',
+      method: 'post',
+      data
+    })
   }
 
 

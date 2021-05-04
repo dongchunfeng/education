@@ -4,21 +4,23 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.online.server.domain.Role;
 import com.online.server.domain.RoleExample;
-import com.online.server.dto.RoleDto;
+import com.online.server.domain.RoleResource;
+import com.online.server.domain.RoleResourceExample;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.ResponseDto;
+import com.online.server.dto.RoleDto;
 import com.online.server.mapper.RoleMapper;
+import com.online.server.mapper.RoleResourceMapper;
 import com.online.server.util.CopyUtil;
 import com.online.server.util.UuidUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 
 /**
@@ -33,9 +35,12 @@ public class RoleService {
 
     @Resource
     private RoleMapper roleMapper;
+    @Resource
+    private RoleResourceMapper roleResourceMapper;
 
     /**
      * 分页查询
+     *
      * @param page
      * @param size
      * @return
@@ -81,6 +86,7 @@ public class RoleService {
 
     /**
      * 保存
+     *
      * @param role
      * @return
      */
@@ -92,6 +98,7 @@ public class RoleService {
 
     /**
      * 修改
+     *
      * @param role
      * @return
      */
@@ -106,7 +113,28 @@ public class RoleService {
         return roleMapper.deleteByPrimaryKey(id);
     }
 
+    /**
+     * 按角色保存资源
+     * @param roleDto
+     */
+    @Transactional
+    public void saveResource(RoleDto roleDto) {
+        String roleId = roleDto.getId();
+        List<String> resourceIds = roleDto.getResourceIds();
+        RoleResourceExample example = new RoleResourceExample();
+        example.createCriteria().andRoleIdEqualTo(roleId);
+        roleResourceMapper.deleteByExample(example);
 
+        for (int i = 0; i < resourceIds.size(); i++) {
+            RoleResource roleResource = new RoleResource();
+            roleResource.setId(UuidUtil.getShortUuid());
+            roleResource.setRoleId(roleId);
+            roleResource.setResourceId(resourceIds.get(i));
+            roleResourceMapper.insert(roleResource);
+        }
+
+
+    }
 
 
 }

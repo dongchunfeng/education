@@ -3,10 +3,15 @@ package com.online.system.controller.admin;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.ResponseDto;
 import com.online.server.dto.RoleDto;
+import com.online.server.dto.RoleResourceDto;
+import com.online.server.service.RoleResourceService;
 import com.online.server.service.RoleService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Description
@@ -17,11 +22,14 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/admin")
+@Slf4j
 public class RoleController {
 
     @Resource
     private RoleService roleService;
     public static final String BUSINESS_NAME = "角色";
+    @Autowired
+    private RoleResourceService roleResourceService;
 
     /**
      * 分页查询
@@ -45,6 +53,13 @@ public class RoleController {
         return roleService.save(roleDto);
     }
 
+    @PostMapping("/role/saveResource")
+    public ResponseDto<RoleDto> saveResource(@RequestBody RoleDto roleDto){
+        log.info("保存角色资源关联开始");
+        roleService.saveResource(roleDto);
+        return new ResponseDto().ok(0,"添加资源成功",roleDto);
+    }
+
     /**
      * 删除
      * @param id
@@ -57,6 +72,15 @@ public class RoleController {
             return ResponseDto.ok(0, "角色删除成功");
         }
         return ResponseDto.fail(1, "角色删除失败");
+    }
+
+    @RequestMapping(path = "/role/listRoleResource/{roleId}", method = RequestMethod.GET)
+    public ResponseDto listRoleResource(@PathVariable String roleId) {
+        List<RoleResourceDto> allRoleResourceByRoleId = roleResourceService.findAllRoleResourceByRoleId(roleId);
+        if (allRoleResourceByRoleId.size() > 0) {
+            return new ResponseDto().ok(0, "查询角色资源成功",allRoleResourceByRoleId);
+        }
+        return ResponseDto.fail(0, "查询角色资源失败");
     }
 
 }

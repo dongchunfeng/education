@@ -4,9 +4,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.online.server.domain.RoleResource;
 import com.online.server.domain.RoleResourceExample;
-import com.online.server.dto.RoleResourceDto;
 import com.online.server.dto.PageDto;
 import com.online.server.dto.ResponseDto;
+import com.online.server.dto.RoleResourceDto;
 import com.online.server.mapper.RoleResourceMapper;
 import com.online.server.util.CopyUtil;
 import com.online.server.util.UuidUtil;
@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 
 /**
@@ -36,6 +34,7 @@ public class RoleResourceService {
 
     /**
      * 分页查询
+     *
      * @param page
      * @param size
      * @return
@@ -81,6 +80,7 @@ public class RoleResourceService {
 
     /**
      * 保存
+     *
      * @param roleResource
      * @return
      */
@@ -92,6 +92,7 @@ public class RoleResourceService {
 
     /**
      * 修改
+     *
      * @param roleResource
      * @return
      */
@@ -106,7 +107,12 @@ public class RoleResourceService {
         return roleResourceMapper.deleteByPrimaryKey(id);
     }
 
-
+    public List<RoleResourceDto> findAllRoleResourceByRoleId(String roleId) {
+        RoleResourceExample roleResourceExample = new RoleResourceExample();
+        roleResourceExample.createCriteria().andRoleIdEqualTo(roleId);
+        List<RoleResource> roleResources = roleResourceMapper.selectByExample(roleResourceExample);
+        return CopyUtil.copyList(roleResources, RoleResourceDto.class);
+    }
 
 
 }
