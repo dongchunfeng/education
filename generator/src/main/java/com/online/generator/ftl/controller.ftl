@@ -34,8 +34,8 @@ public class ${Domain}Controller {
      * @return
      */
     @RequestMapping(path = "/${domain}/{page}/{size}", method = RequestMethod.GET)
-    public ResponseDto list(@PathVariable int page, @PathVariable int size, Query${Domain}Dto qs) {
-        PageDto all = ${domain}Service.findAll(page, size, qs.get${Searchname}());
+    public ResponseDto list(@PathVariable int page, @PathVariable int size) {
+        PageDto all = ${domain}Service.findAll(page, size);
         return new ResponseDto().ok(0, "${tableNameCn}列表查询成功", all);
     }
 

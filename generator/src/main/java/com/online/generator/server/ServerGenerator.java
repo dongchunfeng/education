@@ -50,8 +50,8 @@ public class ServerGenerator {
         System.out.println("Domain：" + tableElement.attributeValue("domainObjectName"));
 
 
-        String title = "name";
-        String Title = "Name";
+//        String title = "name";
+//        String Title = "Name";
 
         List<Field> fieldList = DbUtil.getColumnByTableName(tableName);
         Set<String> javaTypes = getJavaTypes(fieldList);
@@ -59,8 +59,8 @@ public class ServerGenerator {
         Map<String, Object> map = new HashMap<>();
         map.put("Domain", Domain);
         map.put("domain", domain);
-        map.put("Searchname", Title);
-        map.put("searchname", title);
+//        map.put("Searchname", Title);
+//        map.put("searchname", title);
         map.put("tableNameCn", tableNameCn);
 
         map.put("module", module);
@@ -71,8 +71,8 @@ public class ServerGenerator {
         FreemarkerUtil.initConfig("dto.ftl");
         FreemarkerUtil.generator(toDtoPath + Domain + "Dto.java", map);
 
-        FreemarkerUtil.initConfig("querydto.ftl");
-        FreemarkerUtil.generator(toDtoPath + "Query" + Domain + "Dto.java", map);
+//        FreemarkerUtil.initConfig("querydto.ftl");
+//        FreemarkerUtil.generator(toDtoPath + "Query" + Domain + "Dto.java", map);
 
         FreemarkerUtil.initConfig("service.ftl");
         FreemarkerUtil.generator(toServicePath + Domain + "Service.java", map);

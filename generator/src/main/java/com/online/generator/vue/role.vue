@@ -16,7 +16,11 @@
   </div>
 </el-dialog>
     <template slot="header">
+      <el-form :model="params">
+      昵称:<el-input v-model="params.name" style="width:100px;margin-right:5px"></el-input>
+      <el-button type="primary" v-on:click="getTableData" size="small" style="margin-right:5px">查询</el-button>
       <el-button type="primary" v-on:click="openRoleHtml('ruleForm')" size="small">新增角色</el-button>
+    </el-form>
     </template>
     <el-table
     :data="tableData"

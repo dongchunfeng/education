@@ -43,10 +43,9 @@ public class ${Domain}Service {
      * 分页查询
      * @param page
      * @param size
-     * @param ${searchname}
      * @return
      */
-    public PageDto findAll(int page, int size, String ${searchname}) {
+    public PageDto findAll(int page, int size) {
         PageDto pageDto = new PageDto();
         pageDto.setPage(page);
         pageDto.setSize(size);
@@ -57,9 +56,7 @@ public class ${Domain}Service {
         ${domain}Example.setOrderByClause("sort desc");
             </#if>
         </#list>
-        if (StringUtils.isNotBlank(${searchname})) {
-            ${domain}Example.createCriteria().and${Searchname}Like("%" + ${searchname} + "%");
-        }
+
         List<${Domain}> ${domain}s = ${domain}Mapper.selectByExample(${domain}Example);
         PageInfo<${Domain}> pageInfo = new PageInfo<>(${domain}s);
         pageDto.setTotal(pageInfo.getTotal());
@@ -73,24 +70,11 @@ public class ${Domain}Service {
         return pageDto;
     }
 
-    /**
-     * 根据${searchname}查询
-     * @param ${searchname}
-     * @return
-     */
-    public boolean find${Domain}By${Searchname}(String ${searchname}){
-        ${Domain}Example ${domain}Example = new ${Domain}Example();
-        ${domain}Example.createCriteria().and${Searchname}EqualTo(${searchname});
-        List<${Domain}> ${domain}s = ${domain}Mapper.selectByExample(${domain}Example);
-        return ${domain}s.size() >0;
-    }
 
     public ResponseDto save(${Domain}Dto ${domain}Dto) {
         ${Domain} ${domain} = CopyUtil.copy(${domain}Dto, ${Domain}.class);
         if (StringUtils.isBlank(${domain}Dto.getId())) {
-            if(this.find${Domain}By${Searchname}(${domain}Dto.get${Searchname}())){
-                return ResponseDto.fail(1, "${tableNameCn}名称重复,请重新输入!");
-            }
+
             int insert = this.insert(${domain});
             if (insert > 0) {
                 return ResponseDto.ok(0, "${tableNameCn}添加成功");
