@@ -1,16 +1,15 @@
 package com.online.server.service;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.online.server.domain.User;
 import com.online.server.domain.UserExample;
-import com.online.server.dto.LoginUserDto;
-import com.online.server.dto.PageDto;
-import com.online.server.dto.ResponseDto;
-import com.online.server.dto.UserDto;
+import com.online.server.dto.*;
 import com.online.server.exception.BusinessException;
 import com.online.server.exception.BusinessExceptionCode;
 import com.online.server.mapper.UserMapper;
+import com.online.server.mapper.my.MyUserMapper;
 import com.online.server.util.CopyUtil;
 import com.online.server.util.UuidUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +20,8 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-
 
 
 /**
@@ -39,9 +37,12 @@ public class UserService {
 
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private MyUserMapper myUserMapper;
 
     /**
      * 分页查询
+     *
      * @param page
      * @param size
      * @param name
@@ -83,35 +84,37 @@ public class UserService {
 
     /**
      * 根据name查询
+     *
      * @param name
      * @return
      */
-    public boolean findUserByName(String name){
+    public boolean findUserByName(String name) {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andNameEqualTo(name);
         List<User> users = userMapper.selectByExample(userExample);
-        return users.size() >0;
+        return users.size() > 0;
     }
 
     /**
      * 根据login_name查询
+     *
      * @param loginName
      * @return
      */
-    public boolean findUserByLoginName(String loginName){
+    public boolean findUserByLoginName(String loginName) {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andLoginNameEqualTo(loginName);
         List<User> users = userMapper.selectByExample(userExample);
-        return users.size() >0;
+        return users.size() > 0;
     }
 
     public ResponseDto save(UserDto userDto) {
         User user = CopyUtil.copy(userDto, User.class);
         if (StringUtils.isBlank(userDto.getId())) {
-            if(this.findUserByLoginName(userDto.getLoginName())){
+            if (this.findUserByLoginName(userDto.getLoginName())) {
                 return ResponseDto.fail(1, "登录名称重复,请重新输入!");
             }
-            if(this.findUserByName(userDto.getName())){
+            if (this.findUserByName(userDto.getName())) {
                 return ResponseDto.fail(1, "用户名称重复,请重新输入!");
             }
             int insert = this.insert(user);
@@ -130,6 +133,7 @@ public class UserService {
 
     /**
      * 保存
+     *
      * @param user
      * @return
      */
@@ -141,6 +145,7 @@ public class UserService {
 
     /**
      * 修改
+     *
      * @param user
      * @return
      */
@@ -156,43 +161,71 @@ public class UserService {
         return userMapper.deleteByPrimaryKey(id);
     }
 
-    public int savePassword(UserDto userDto){
+    public int savePassword(UserDto userDto) {
         User user = new User();
         user.setId(userDto.getId());
         user.setPassword(userDto.getPassword());
         return userMapper.updateByPrimaryKeySelective(user);
     }
 
-    public User findByLoginName(String loginName){
+    public User findByLoginName(String loginName) {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andLoginNameEqualTo(loginName);
         List<User> users = userMapper.selectByExample(userExample);
-        if(CollectionUtils.isEmpty(users)){
+        if (CollectionUtils.isEmpty(users)) {
             return null;
         }
         return users.get(0);
     }
 
-    public LoginUserDto login(UserDto userDto){
-        if(StringUtils.isBlank(userDto.getLoginName())){
+    public LoginUserDto login(UserDto userDto) {
+        if (StringUtils.isBlank(userDto.getLoginName())) {
             throw new BusinessException(BusinessExceptionCode.LOGIN_USER_NOT_NULL);
         }
-        if(StringUtils.isBlank(userDto.getPassword())){
+        if (StringUtils.isBlank(userDto.getPassword())) {
             throw new BusinessException(BusinessExceptionCode.LOGIN_PASSWORD_NOT_NULL);
         }
         User user = findByLoginName(userDto.getLoginName());
-        if(user==null){
-            log.info("用户名不存在: {}",userDto.getLoginName());
+        if (user == null) {
+            log.info("用户名不存在: {}", userDto.getLoginName());
             throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
-        }else{
-            if(user.getPassword().equals(userDto.getPassword())){
+        } else {
+            if (user.getPassword().equals(userDto.getPassword())) {
                 //登录成功
-                return CopyUtil.copy(user, LoginUserDto.class);
-            }else {
-                log.info("密码不对，输入密码: {}, 数据库密码: {}",userDto.getPassword(),user.getPassword());
+                LoginUserDto copy = CopyUtil.copy(user, LoginUserDto.class);
+                setAuth(copy);
+                return copy;
+            } else {
+                log.info("密码不对，输入密码: {}, 数据库密码: {}", userDto.getPassword(), user.getPassword());
                 throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
             }
         }
     }
+
+
+    public void setAuth(LoginUserDto loginUserDto) {
+        List<ResourceDto> resourceDtoList = myUserMapper.findResources(loginUserDto.getId());
+        loginUserDto.setResources(resourceDtoList);
+
+        //整理所有权限的请求  用于接口拦截
+        HashSet<String> requestSet = new HashSet<>();
+        if (!CollectionUtils.isEmpty(resourceDtoList)) {
+
+            for (int i = 0; i < resourceDtoList.size(); i++) {
+                ResourceDto resourceDto = resourceDtoList.get(i);
+                String requestString = resourceDto.getRequest();
+                List<String> requestList = JSON.parseArray(requestString, String.class);
+                if (!CollectionUtils.isEmpty(requestList)) {
+                    requestSet.addAll(requestList);
+                }
+            }
+        }
+
+        log.info("有权限的请求: {}", requestSet);
+
+        loginUserDto.setRequests(requestSet);
+
+    }
+
 
 }
