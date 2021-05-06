@@ -116,6 +116,10 @@ export default {
   created() {
     this.getTableData();
     this.getResourceList();
+    // let loginUser = Tool.getCookie("d2admin-1.20.1-loginUser");
+    // //console.log(decodeURI(resources));
+    // let resources  = JSON.parse(loginUser);
+    // console.log(resources);
   },
   data() {
     return {
@@ -260,27 +264,53 @@ export default {
     },
     async getResourceList() {
       const res = await this.$api.system_RESOURCE_ALL();
+      console.log("获取资源树========");
+      console.log(res);
       this.resourceList = res;
     },
-    async editResource(role) {
-      this.dialogFormEditResourceVisible = true;
-      this.form.id = role.id;
-      const res = await this.$api.system_LIST_ROLERESOURCE(role.id);
+    editResource(role) {
+      let _this = this;
+      _this.dialogFormEditResourceVisible = true;
+      _this.form.id = role.id;
+      //有bug
+      this.getResources(role.id);
+    },
+    async getResources(id) {
+      let _this = this;
+      const res = await this.$api.system_LIST_ROLERESOURCE(id);
       console.log("查询角色资源:");
       console.log(res);
-      this.checkedKeys = [];
-      this.$refs.tree.setCheckedKeys([]);
+      _this.checkedKeys = [];
+      _this.$refs.tree.setCheckedKeys([]);
 
       if (Tool.isEmpty(res.data)) {
         return;
       }
-      for (let index = 0; index < res.data.length; index++) {
-        const element = res.data[index].resourceId;
-        this.checkedKeys.push(element);
+      //_this.checkedKeys = ["01","0101","010101","010102","010103","0102","010201",]; 01 02
+
+      this.mergeArray(res.data,this.resourceList);
+
+    },
+    //两数组去除重复数值
+    mergeArray(arr1, arr2) {
+      for (var i = 0; i < arr1.length; i++) {
+        for (var j = 0; j < arr2.length; j++) {
+          if (arr1[i].resourceId === arr2[j].id) {
+            arr1.splice(i, 1); //利用splice函数删除元素，从第i个位置，截取长度为1的元素
+          }
+        }
       }
+      //alert(arr1.length)
+      for (let index = 0; index < arr1.length; index++) {
+        const element = arr1[index];
+        this.checkedKeys.push(element.resourceId);
+      }
+      console.log(arr1);
+      console.log(this.checkedKeys);
+      return arr1;
     },
     async saveResource() {
-      let roleResource = this.$refs.tree.getCheckedNodes();
+      let roleResource = this.$refs.tree.getCheckedNodes(false, true);
       if (Tool.isEmpty(roleResource)) {
         this.$notify.error({
           title: "错误",
@@ -330,8 +360,6 @@ export default {
         }
 
         this.listRoleUser();
-
-
       }
     },
     async saveUserRole() {
@@ -350,16 +378,16 @@ export default {
         this.dialogFormEditUserVisible = false;
       }
     },
-    async listRoleUser(){
-        const res = await this.$api.system_LIST_ROLEUSER(this.form.id);
-        console.log("listRoleUser=========");
-        console.log(res);
-        if(res.success){
-            for (let index = 0; index < res.data.length; index++) {
-              const element = res.data[index];
-              this.roleUsers.push(element.userId);
-            }
+    async listRoleUser() {
+      const res = await this.$api.system_LIST_ROLEUSER(this.form.id);
+      console.log("listRoleUser=========");
+      console.log(res);
+      if (res.success) {
+        for (let index = 0; index < res.data.length; index++) {
+          const element = res.data[index];
+          this.roleUsers.push(element.userId);
         }
+      }
     },
   },
 };

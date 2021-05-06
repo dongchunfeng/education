@@ -74,7 +74,7 @@ import { get } from 'lodash'
 export default {
   data () {
     return {
-      uploading: false
+      uploading: false,
     }
   },
   computed: {

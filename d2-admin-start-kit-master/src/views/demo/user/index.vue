@@ -33,7 +33,7 @@
       <el-form :model="params">
       昵称:<el-input v-model="params.name" style="width:100px;margin-right:5px"></el-input>
       <el-button type="primary" v-on:click="getTableData" size="small" style="margin-right:5px">查询</el-button>
-      <el-button type="primary" v-on:click="openUserHtml('ruleForm')" size="small">新增用户</el-button>
+      <el-button v-show="hasResource('010101')" type="primary" v-on:click="openUserHtml('ruleForm')" size="small">新增用户</el-button>
     </el-form>
     </template>
     <el-table
@@ -70,9 +70,9 @@
       label="操作"
       width="100">
       <template slot-scope="scope">
-        <el-button @click="editPassword(scope.row)" type="text" size="small">修改密码</el-button>
-        <el-button @click="handleClickEdit(scope.row)" type="text" size="small">编辑</el-button>
-        <el-button type="text" size="small" @click="del(scope.row.id)">删除</el-button>
+        <el-button v-show="hasResource('010103')" @click="editPassword(scope.row)" type="text" size="small">修改密码</el-button>
+        <el-button v-show="hasResource('010101')" @click="handleClickEdit(scope.row)" type="text" size="small">编辑</el-button>
+        <el-button v-show="hasResource('010102')" type="text" size="small" @click="del(scope.row.id)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -146,6 +146,9 @@ export default {
       }
     },
     methods: {
+      hasResource(id){
+        return Tool.hasResource(id);
+      },
       openUserHtml(formName){
         this.dialogFormUserVisible = true;
         this.title="添加用户";

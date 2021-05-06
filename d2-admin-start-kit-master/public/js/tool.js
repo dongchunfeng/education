@@ -1,3 +1,5 @@
+
+
 Tool = {
   /**
    * 空校验 null或""都返回true
@@ -123,7 +125,11 @@ Tool = {
    */
   hasResource: function (id) {
     let _this = this;
-    let resources = _this.getLoginUser().resources;
+    let loginUser = this.getCookie("d2admin-1.20.1-loginUser");
+    loginUser  = JSON.parse(loginUser);
+    let resources = loginUser.resources;
+    console.log("resources============");
+    console.log(resources);
     if (_this.isEmpty(resources)) {
       return false;
     }
@@ -134,21 +140,52 @@ Tool = {
     }
     return false;
   },
-  dispatch : function(el ,type){
-    try{
-        if(el.dispatchEvent){
-            var evt = document.createEvent('Event');
+  dispatch: function (el, type) {
+    try {
+      if (el.dispatchEvent) {
+        var evt = document.createEvent('Event');
 
-            evt.initEvent(type,true,true);
+        evt.initEvent(type, true, true);
 
-            el.dispatchEvent(evt);
+        el.dispatchEvent(evt);
 
-        }else if(el.fireEvent){
-            el.fireEvent('on'+type);
+      } else if (el.fireEvent) {
+        el.fireEvent('on' + type);
 
-        }
+      }
 
-    }catch(e){};
+    } catch (e) { };
 
+  },
+  getCookie: function (name) {
+    //解码
+    cookie = decodeURIComponent(document.cookie);
+    var arr = cookie.split("; ");
+    for (var i = 0; i < arr.length; i++) {
+      var arr2 = arr[i].split("=");
+      if (arr2[0] == name) {
+        return arr2[1];
+      }
+    }
+  },
+  setCookie: function (name, value, time) {
+    var strsec = this.getsec(time);
+    var exp = new Date();
+    exp.setTime(exp.getTime() + strsec * 1);
+    document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+  },
+  getsec: function (str) {
+
+    var str1 = str.substring(1, str.length) * 1;
+    var str2 = str.substring(0, 1);
+    if (str2 == "s") {
+      return str1 * 1000;
+    }
+    else if (str2 == "h") {
+      return str1 * 60 * 60 * 1000;
+    }
+    else if (str2 == "d") {
+      return str1 * 24 * 60 * 60 * 1000;
+    }
   }
 };
