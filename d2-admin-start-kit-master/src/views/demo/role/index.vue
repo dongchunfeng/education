@@ -295,6 +295,9 @@ export default {
     mergeArray(arr1, arr2) {
       for (var i = 0; i < arr1.length; i++) {
         for (var j = 0; j < arr2.length; j++) {
+          if(arr1[i].resourceId=='00'){
+            continue;
+          }
           if (arr1[i].resourceId === arr2[j].id) {
             arr1.splice(i, 1); //利用splice函数删除元素，从第i个位置，截取长度为1的元素
           }

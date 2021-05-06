@@ -1,4 +1,9 @@
 [{
+  "id": "00",
+  "name": "首页",
+  "page": "/index"
+},
+  {
   "id": "01","name": "系统管理",
   "children": [{
     "id": "0101","name": "用户管理","page": "/user",

@@ -29,16 +29,25 @@ function userResource() {
     return;
   }
   let resources = JSON.parse(loginUser);
-  //console.log("userResourcedasdsad==================");
-  //console.log(resources);
+  console.log("userResourcedasdsad==================");
+  console.log(resources);
   //let resource = Tool.hasResource(resources.id);
   let menu = [];
-  menu.push({ path: '/index', title: '首页', icon: 'home' });
+  //menu.push({ path: '/index', title: '首页', icon: 'home' });
 
   //let menus = arraytotree(resources.resources);
   for (let index = 0; index < resources.resources.length; index++) {
     let parent = resources.resources[index];
+    
     if (parent.parent === '') {
+      if(parent.id==='00'){
+        menu.splice(0,0,{
+          title: parent.name,
+          icon: 'home',
+          path:parent.page
+        });
+        continue;
+      }
       menu.push({
         id: parent.id,
         title: parent.name,

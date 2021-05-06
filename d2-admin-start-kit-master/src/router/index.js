@@ -28,6 +28,23 @@ const router = new VueRouter({
   routes
 })
 
+//查找是否有权限
+function hasResourceRouter(toName){
+  let loginUser = Tool.getCookie("d2admin-1.20.1-loginUser");
+  //console.log(decodeURI(resources));
+  if (Tool.isEmpty(loginUser) || loginUser == undefined) {
+    return false;
+  }
+  let resources = JSON.parse(loginUser);
+  for (let index = 0; index < resources.resources.length; index++) {
+    const page = resources.resources[index].page;
+    if(toName.fullPath===page){
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * 路由拦截
  * 权限验证
@@ -43,10 +60,22 @@ router.beforeEach(async (to, from, next) => {
   store.commit('d2admin/search/set', false)
   // 验证当前路由所有的匹配中是否需要有登录验证的
   if (to.matched.some(r => r.meta.auth)) {
+    console.log("当前路由==============");
+    console.log(to);
     // 这里暂时将cookie里是否存有token作为验证是否登录的条件
     // 请根据自身业务需要修改
     const token = util.cookies.get('token')
     if (token && token !== 'undefined') {
+      if(!hasResourceRouter(to)){
+        next({
+          name: 'login',
+          query: {
+            redirect: to.fullPath
+          }
+        })
+        // https://github.com/d2-projects/d2-admin/issues/138
+        NProgress.done()
+      }
       next()
     } else {
       // 没有登录的时候跳转到登录界面
