@@ -12,6 +12,10 @@ import lombok.Data;
 @Data
 public class QueryUserDto {
 
+    Integer page;
+
+    Integer size;
+
     String name;
 
 }

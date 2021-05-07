@@ -124,6 +124,7 @@ export default {
   data() {
     return {
       resourceList: [],
+      resourceListAll: [],
       // 默认选中节点
       checkedKeys: [],
       defaultProps: {
@@ -264,9 +265,12 @@ export default {
     },
     async getResourceList() {
       const res = await this.$api.system_RESOURCE_ALL();
+      const ress = await this.$api.system_RESOURCE({page:1,size:9999});
       console.log("获取资源树========");
       console.log(res);
+      console.log(ress.data.list);
       this.resourceList = res;
+      this.resourceListAll = ress.data.list;
     },
     editResource(role) {
       let _this = this;
@@ -279,7 +283,7 @@ export default {
       let _this = this;
       const res = await this.$api.system_LIST_ROLERESOURCE(id);
       console.log("查询角色资源:");
-      console.log(res);
+      console.log(res.data);
       _this.checkedKeys = [];
       _this.$refs.tree.setCheckedKeys([]);
 
@@ -287,30 +291,33 @@ export default {
         return;
       }
       //_this.checkedKeys = ["01","0101","010101","010102","010103","0102","010201",]; 01 02
-
-      this.mergeArray(res.data,this.resourceList);
-
+      for (let index = 0; index < res.data.length; index++) {
+        const element = res.data[index];
+        let node = this.$refs.tree.getNode(element.resourceId);
+        this.$refs.tree.setChecked(node,true);
+      }
+      
+      
     },
     //两数组去除重复数值
     mergeArray(arr1, arr2) {
       for (var i = 0; i < arr1.length; i++) {
         for (var j = 0; j < arr2.length; j++) {
-          if(arr1[i].resourceId=='00'){
-            continue;
-          }
-          if (arr1[i].resourceId === arr2[j].id) {
-            arr1.splice(i, 1); //利用splice函数删除元素，从第i个位置，截取长度为1的元素
+          
+          if (arr1[i].id === arr2[j].resourceId) {
+            //arr2.splice(i, 1); //利用splice函数删除元素，从第i个位置，截取长度为1的元素
+            
           }
         }
       }
       //alert(arr1.length)
-      for (let index = 0; index < arr1.length; index++) {
-        const element = arr1[index];
+      for (let index = 0; index < arr2.length; index++) {
+        const element = arr2[index];
         this.checkedKeys.push(element.resourceId);
       }
-      console.log(arr1);
+
       console.log(this.checkedKeys);
-      return arr1;
+      return arr2;
     },
     async saveResource() {
       let roleResource = this.$refs.tree.getCheckedNodes(false, true);

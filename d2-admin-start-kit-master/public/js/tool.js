@@ -128,8 +128,7 @@ Tool = {
     let loginUser = this.getCookie("d2admin-1.20.1-loginUser");
     loginUser  = JSON.parse(loginUser);
     let resources = loginUser.resources;
-    console.log("resources============");
-    console.log(resources);
+    
     if (_this.isEmpty(resources)) {
       return false;
     }

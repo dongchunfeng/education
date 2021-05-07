@@ -9,12 +9,12 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
    */
   BUSINESS_USER (data = {}) {
     
-    let query = querystring.stringify(data);
+    //let query = querystring.stringify(data);
 
     // 接口请求
     return request({
-      url: '/system/admin/user/'+data.page+'/'+data.size+"?"+query,
-      method: 'get',
+      url: '/system/admin/user/list',
+      method: 'post',
       data
     })
   },
@@ -50,7 +50,7 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
 
     // 接口请求
     return request({
-      url: '/system/admin/user',
+      url: '/system/admin/user/list',
       method: 'get',
       data
     })

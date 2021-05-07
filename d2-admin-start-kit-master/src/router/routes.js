@@ -101,7 +101,6 @@ const frameIn = [
         name: 'log',
         meta: {
           title: '前端日志',
-          auth: true
         },
         component: _import('system/log')
       },

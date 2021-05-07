@@ -39,18 +39,16 @@ public class UserController {
 
     /**
      * 分页查询
-     * @param page
-     * @param size
      * @param qs
      * @return
      */
-    @RequestMapping(path = "/user/{page}/{size}", method = RequestMethod.GET)
-    public ResponseDto list(@PathVariable int page, @PathVariable int size, QueryUserDto qs) {
-        PageDto all = userService.findAll(page, size, qs.getName());
+    @RequestMapping(path = "/user/list", method = RequestMethod.POST)
+    public ResponseDto list(@RequestBody  QueryUserDto qs) {
+        PageDto all = userService.findAll(qs.getPage(), qs.getSize(), qs.getName());
         return new ResponseDto().ok(0, "用户列表查询成功", all);
     }
 
-    @RequestMapping(path = "/user", method = RequestMethod.GET)
+    @RequestMapping(path = "/user/list", method = RequestMethod.GET)
     public ResponseDto list() {
         List<UserDto> all = userService.findAll();
         return new ResponseDto().ok(0, "用户列表查询成功", all);
