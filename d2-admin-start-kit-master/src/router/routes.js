@@ -95,6 +95,16 @@ const frameIn = [
         },
         component: _import('business/section')
       },
+      {
+        path: 'file',
+        name: 'file',
+        meta: {
+          title: '文件管理',
+          auth: true
+          
+        },
+        component: _import('file')
+      },
       // 系统 前端日志
       {
         path: 'log',

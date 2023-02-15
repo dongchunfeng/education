@@ -18,6 +18,7 @@ import org.springframework.core.env.Environment;
 @MapperScan("com.online.server.mapper")
 public class FileApplication {
 
+    
     public static void main(String[] args) {
 
         SpringApplication app = new SpringApplication(FileApplication.class);

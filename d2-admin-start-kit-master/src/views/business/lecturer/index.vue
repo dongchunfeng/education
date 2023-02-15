@@ -61,8 +61,8 @@
       </el-form>
     </template>
     <el-row>
-      <el-col :span="6" v-for="teacher in tableData" :key="teacher.id">
-        <el-card :body-style="{ padding: '5px' }">
+      <el-col :span="8" v-for="teacher in tableData" :key="teacher.id">
+        <el-card :body-style="{ padding: '5px' }" style="">
           <img v-show="!teacher.image" src="./../../../../public/image/avator/avator1.jpg" class="image" />
           <img v-show="teacher.image" :src="teacher.image" class="image" />
           <div class="d2-text-center">
@@ -320,7 +320,7 @@ export default {
       this.form.id = row.id;
       this.form.name = row.name;
       this.form.nickname = row.nickname;
-      //this.form.image = row.image;
+      this.form.image = row.image;
       this.form.position = row.position;
       this.form.motto = row.motto;
       this.form.intro = row.intro;

@@ -38,6 +38,9 @@ function hasResourceRouter(toName){
   let resources = JSON.parse(loginUser);
   for (let index = 0; index < resources.resources.length; index++) {
     const page = resources.resources[index].page;
+    if(toName.fullPath==='/chapter'||toName.fullPath==='/section'){
+      return true;
+    }
     if(toName.fullPath===page){
       return true;
     }
@@ -66,6 +69,7 @@ router.beforeEach(async (to, from, next) => {
     // 请根据自身业务需要修改
     const token = util.cookies.get('token')
     if (token && token !== 'undefined') {
+      console.log("有token=============");
       if(!hasResourceRouter(to)){
         next({
           name: 'login',

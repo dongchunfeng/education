@@ -1,6 +1,10 @@
 spring:
   application:
     name: file
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
 server:
   port: 9003
   servlet:
@@ -12,4 +16,4 @@ eureka:
 
 file:
   path: D:/projectdev/education/course/
-  domain: http://127.0.0.1:9000/file/
+  domain: http://127.0.0.1:9000/file/f/

@@ -20,7 +20,19 @@
                   <el-input v-model="form.chapterId" autocomplete="off" disabled></el-input>
               </el-form-item>
               <el-form-item label="视频" prop="video">
-                  <el-input v-model="form.video" autocomplete="off"></el-input>
+                  <!-- <el-input v-model="form.video" autocomplete="off"></el-input> -->
+                  <bigFile
+                    :text="'上传大视频'"
+                    :suffixs="'video/mp4'"
+                    :after-upload="afterUpload"
+                  >
+
+                  </bigFile>
+                  <el-row v-show="form.video">
+                      <el-col :span="4">
+                          <video height="500px" width="500px" :src="form.video" id="video" controls="controls"></video>
+                      </el-col>
+                  </el-row>
               </el-form-item>
               <el-form-item label="时长" prop="time">
                   <el-input v-model="form.time" autocomplete="off"></el-input>
@@ -141,7 +153,9 @@
 </style>
 
 <script>
+import bigFile from "../../../components/bigFile/index.vue"
 export default {
+    components:{bigFile},
     name: 'sections',
     mounted(){
       let chapter = SessionStorage.get(SESSION_KEY_CHAPTER)||{};
@@ -235,6 +249,10 @@ export default {
       }
     },
     methods: {
+      afterUpload(resp){
+        
+        this.form.video = resp.data;
+      },
       openSectionHtml(formName){
         this.dialogFormSectionVisible = true;
         this.title="添加小节";

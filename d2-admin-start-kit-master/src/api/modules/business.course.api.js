@@ -77,6 +77,16 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       method: 'get',
       data
     })
+  },
+  FILE_UPLOAD (data = {}) {
+    
+
+    // 接口请求
+    return request({
+      url: '/file/admin/upload',
+      method: 'get',
+      data
+    })
   }
 
 

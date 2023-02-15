@@ -22,6 +22,9 @@ spring:
         - Path=/file/**
         filters:
           - LoginAdmin=true
+      discovery:
+        locator:
+          route-id-prefix:
   redis:
     database: 2
     host: localhost

@@ -19,7 +19,7 @@ import java.util.*;
  * @Date 2021/4/15 20:30
  */
 public class ServerGenerator {
-    static String MODULE = "system";
+    static String MODULE = "file";
     static String toVuePath = "generator\\src\\main\\java\\com\\online\\generator\\vue\\";
 
     static String generatorConfigPath = "server\\src\\main\\resources\\generator\\generatorConfig.xml";
@@ -53,7 +53,7 @@ public class ServerGenerator {
         //搜索的参数
         String Title = "name";
         //api名字
-        String SECTION = "ROLE";
+        String SECTION = "FILE";
         //val
         String val = "${val}";
 

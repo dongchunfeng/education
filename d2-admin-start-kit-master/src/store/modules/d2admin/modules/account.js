@@ -51,7 +51,8 @@ function userResource() {
       menu.push({
         id: parent.id,
         title: parent.name,
-        icon: 'folder-o'
+        icon: 'folder-o',
+        path:parent.page
       });
       // for (let j = 0; j < resources.resources.length; j++) {
       //   let child = resources.resources[j];
